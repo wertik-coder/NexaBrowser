@@ -1,0 +1,7704 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#070b14">
+<meta name="description" content="NexaBrowser — персональный браузер и поисковая система">
+<title>NexaBrowser</title>
+
+<style>
+:root{
+    --bg:#070b14;
+    --bg2:#0a101c;
+    --surface:#0f1726;
+    --surface2:#131e30;
+    --surface3:#19263b;
+    --surface4:#202f47;
+    --border:#263751;
+    --border2:#344966;
+    --text:#f5f8ff;
+    --text2:#c0cada;
+    --muted:#7888a0;
+    --primary:#667cff;
+    --primary2:#8b65ff;
+    --cyan:#20d9ff;
+    --green:#39d998;
+    --yellow:#ffd15a;
+    --red:#ff6077;
+    --orange:#ff9b52;
+    --shadow:0 20px 70px rgba(0,0,0,.35);
+    --radius:12px;
+    --radius2:17px;
+    --transition:.18s ease;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+}
+
+body{
+    overflow:hidden;
+    color:var(--text);
+    background:var(--bg);
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+input,
+textarea,
+select{
+    outline:none;
+}
+
+::-webkit-scrollbar{
+    width:9px;
+    height:9px;
+}
+
+::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#263650;
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#3a4d6b;
+}
+
+/* =========================
+   APPLICATION
+   ========================= */
+
+#app{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 15% 0%,
+            rgba(102,124,255,.08),
+            transparent 34%
+        ),
+        var(--bg);
+}
+
+/* =========================
+   TOP BAR
+   ========================= */
+
+.topbar{
+    height:48px;
+    flex:0 0 48px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 10px;
+    background:#080d17;
+    border-bottom:1px solid var(--border);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:185px;
+}
+
+.brand-logo{
+    width:30px;
+    height:30px;
+    display:grid;
+    place-items:center;
+    border-radius:9px;
+    color:white;
+    font-size:17px;
+    font-weight:900;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--cyan)
+        );
+    box-shadow:
+        0 6px 24px rgba(32,217,255,.15);
+}
+
+.brand-title{
+    font-size:13px;
+    font-weight:800;
+}
+
+.brand-subtitle{
+    margin-top:2px;
+    color:var(--muted);
+    font-size:7px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.top-actions{
+    display:flex;
+    gap:4px;
+    margin-left:auto;
+}
+
+.top-action{
+    width:30px;
+    height:29px;
+    display:grid;
+    place-items:center;
+    color:var(--muted);
+    background:transparent;
+    border-radius:7px;
+}
+
+.top-action:hover{
+    color:white;
+    background:var(--surface3);
+}
+
+.top-action.close:hover{
+    color:white;
+    background:var(--red);
+}
+
+/* =========================
+   TABS
+   ========================= */
+
+.tabs{
+    height:39px;
+    flex:0 0 39px;
+    display:flex;
+    align-items:flex-end;
+    gap:4px;
+    padding:0 8px;
+    background:#070c15;
+    border-bottom:1px solid var(--border);
+    overflow-x:auto;
+    overflow-y:hidden;
+}
+
+.tab{
+    height:34px;
+    min-width:145px;
+    max-width:225px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 9px;
+    color:var(--muted);
+    background:#0d1522;
+    border:1px solid transparent;
+    border-bottom:0;
+    border-radius:9px 9px 0 0;
+    transition:var(--transition);
+    user-select:none;
+}
+
+.tab:hover{
+    color:var(--text2);
+    background:#111b2b;
+}
+
+.tab.active{
+    color:white;
+    background:var(--surface);
+    border-color:var(--border);
+}
+
+.tab-icon{
+    width:17px;
+    flex:0 0 17px;
+    text-align:center;
+    font-size:12px;
+}
+
+.tab-title{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:11px;
+}
+
+.tab-close{
+    width:21px;
+    height:21px;
+    display:grid;
+    place-items:center;
+    color:var(--muted);
+    background:transparent;
+    border-radius:5px;
+}
+
+.tab-close:hover{
+    color:white;
+    background:var(--surface3);
+}
+
+.new-tab{
+    width:32px;
+    height:32px;
+    flex:0 0 32px;
+    display:grid;
+    place-items:center;
+    margin-bottom:1px;
+    color:var(--muted);
+    background:transparent;
+    border-radius:7px;
+    font-size:19px;
+}
+
+.new-tab:hover{
+    color:white;
+    background:var(--surface3);
+}
+
+/* =========================
+   NAVIGATION TOOLBAR
+   ========================= */
+
+.toolbar{
+    min-height:56px;
+    flex:0 0 56px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 10px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+}
+
+.nav-group{
+    display:flex;
+    gap:4px;
+}
+
+.nav-button{
+    width:36px;
+    height:36px;
+    display:grid;
+    place-items:center;
+    color:var(--text2);
+    background:var(--surface2);
+    border:1px solid transparent;
+    border-radius:9px;
+    transition:var(--transition);
+}
+
+.nav-button:hover{
+    color:white;
+    background:var(--surface3);
+    border-color:var(--border);
+}
+
+.nav-button:disabled{
+    opacity:.3;
+    cursor:not-allowed;
+}
+
+.address{
+    height:38px;
+    flex:1;
+    min-width:80px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 10px;
+    background:#09111d;
+    border:1px solid var(--border2);
+    border-radius:11px;
+    transition:var(--transition);
+}
+
+.address:focus-within{
+    border-color:var(--primary);
+    box-shadow:
+        0 0 0 3px rgba(102,124,255,.12);
+}
+
+.security{
+    width:18px;
+    flex:0 0 18px;
+    color:var(--green);
+    text-align:center;
+    font-size:12px;
+}
+
+.address-input{
+    width:100%;
+    height:100%;
+    border:0;
+    color:white;
+    background:transparent;
+    font-size:12px;
+}
+
+.address-input::placeholder{
+    color:#586a83;
+}
+
+.address-star{
+    width:27px;
+    height:27px;
+    display:grid;
+    place-items:center;
+    color:var(--muted);
+    background:transparent;
+    border-radius:6px;
+    font-size:17px;
+}
+
+.address-star:hover{
+    color:var(--yellow);
+    background:rgba(255,209,90,.08);
+}
+
+.address-star.active{
+    color:var(--yellow);
+}
+
+.toolbar-menu{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    color:var(--text2);
+    background:var(--surface2);
+    border:1px solid transparent;
+    border-radius:9px;
+    font-size:18px;
+}
+
+.toolbar-menu:hover{
+    color:white;
+    background:var(--surface3);
+    border-color:var(--border);
+}
+
+/* =========================
+   MAIN LAYOUT
+   ========================= */
+
+.main{
+    flex:1;
+    min-height:0;
+    display:flex;
+    overflow:hidden;
+}
+
+.sidebar{
+    width:238px;
+    flex:0 0 238px;
+    padding:11px 9px;
+    background:#090f19;
+    border-right:1px solid var(--border);
+    overflow-y:auto;
+}
+
+.sidebar-section{
+    margin-bottom:18px;
+}
+
+.sidebar-label{
+    padding:5px 10px 7px;
+    color:#586a82;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1.3px;
+    text-transform:uppercase;
+}
+
+.sidebar-item{
+    width:100%;
+    min-height:37px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:0 10px;
+    color:var(--text2);
+    background:transparent;
+    border-radius:9px;
+    text-align:left;
+    transition:var(--transition);
+}
+
+.sidebar-item:hover{
+    color:white;
+    background:var(--surface2);
+}
+
+.sidebar-item.active{
+    color:white;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(102,124,255,.19),
+            rgba(102,124,255,.04)
+        );
+}
+
+.sidebar-icon{
+    width:20px;
+    text-align:center;
+}
+
+.sidebar-name{
+    flex:1;
+    font-size:11px;
+}
+
+.sidebar-count{
+    min-width:18px;
+    padding:2px 5px;
+    color:#9aabc2;
+    background:#19263a;
+    border-radius:8px;
+    font-size:8px;
+    text-align:center;
+}
+
+.view{
+    position:relative;
+    flex:1;
+    min-width:0;
+    min-height:0;
+    overflow:hidden;
+}
+
+.page{
+    position:absolute;
+    inset:0;
+    overflow:auto;
+}
+
+/* =========================
+   HOME
+   ========================= */
+
+.home{
+    min-height:100%;
+    padding:65px 20px 80px;
+    background:
+        radial-gradient(
+            circle at 50% 3%,
+            rgba(102,124,255,.15),
+            transparent 31%
+        ),
+        radial-gradient(
+            circle at 85% 18%,
+            rgba(32,217,255,.07),
+            transparent 24%
+        );
+}
+
+.home-inner{
+    width:min(1060px,100%);
+    margin:auto;
+}
+
+.hero{
+    text-align:center;
+}
+
+.hero-logo{
+    width:88px;
+    height:88px;
+    margin:auto;
+    display:grid;
+    place-items:center;
+    color:white;
+    border-radius:27px;
+    font-size:44px;
+    font-weight:900;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--cyan)
+        );
+    box-shadow:
+        0 24px 70px rgba(32,217,255,.13);
+}
+
+.hero h1{
+    margin:22px 0 7px;
+    font-size:43px;
+    line-height:1;
+    letter-spacing:-1.8px;
+}
+
+.hero p{
+    margin:0;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.search-area{
+    width:min(790px,100%);
+    margin:32px auto 0;
+}
+
+.search-wrapper{
+    position:relative;
+}
+
+.search-icon{
+    position:absolute;
+    left:19px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--muted);
+    pointer-events:none;
+}
+
+.home-search{
+    width:100%;
+    height:62px;
+    padding:0 22px 0 51px;
+    color:white;
+    background:#0b1422;
+    border:1px solid var(--border2);
+    border-radius:18px;
+    font-size:15px;
+    box-shadow:var(--shadow);
+}
+
+.home-search:focus{
+    border-color:var(--primary);
+    box-shadow:
+        0 0 0 4px rgba(102,124,255,.1),
+        var(--shadow);
+}
+
+.search-buttons{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:12px;
+}
+
+.primary{
+    min-height:38px;
+    padding:0 18px;
+    color:white;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary2)
+        );
+    border-radius:9px;
+    font-size:11px;
+    font-weight:700;
+    box-shadow:
+        0 7px 24px rgba(102,124,255,.15);
+    transition:var(--transition);
+}
+
+.primary:hover{
+    filter:brightness(1.1);
+    transform:translateY(-1px);
+}
+
+.secondary{
+    min-height:38px;
+    padding:0 18px;
+    color:var(--text2);
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:9px;
+    font-size:11px;
+    font-weight:700;
+    transition:var(--transition);
+}
+
+.secondary:hover{
+    color:white;
+    background:var(--surface3);
+}
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:10px;
+    margin-top:52px;
+}
+
+.quick-card{
+    min-height:102px;
+    padding:16px 9px;
+    color:var(--text2);
+    background:rgba(15,23,38,.78);
+    border:1px solid var(--border);
+    border-radius:14px;
+    text-align:center;
+    transition:var(--transition);
+}
+
+.quick-card:hover{
+    color:white;
+    background:var(--surface2);
+    border-color:var(--border2);
+    transform:translateY(-2px);
+    box-shadow:var(--shadow);
+}
+
+.quick-icon{
+    margin-bottom:10px;
+    font-size:25px;
+}
+
+.quick-title{
+    font-size:10px;
+    font-weight:800;
+}
+
+.quick-description{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:8px;
+}
+
+.widgets{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:12px;
+    margin-top:30px;
+}
+
+.widget{
+    min-height:135px;
+    padding:17px;
+    background:rgba(15,23,38,.75);
+    border:1px solid var(--border);
+    border-radius:15px;
+}
+
+.widget-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.widget-title{
+    color:var(--text2);
+    font-size:10px;
+    font-weight:800;
+}
+
+.widget-icon{
+    font-size:16px;
+}
+
+.clock{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-1px;
+}
+
+.date{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:9px;
+}
+
+/* =========================
+   SEARCH RESULTS
+   ========================= */
+
+.search-page{
+    min-height:100%;
+    padding:25px 25px 80px;
+}
+
+.results{
+    width:min(1000px,100%);
+    margin:auto;
+}
+
+.results-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.results-head h2{
+    margin:0;
+    font-size:20px;
+}
+
+.results-info{
+    color:var(--muted);
+    font-size:10px;
+}
+
+.result{
+    padding:17px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.result-url{
+    margin-bottom:5px;
+    color:var(--green);
+    font-size:10px;
+}
+
+.result-title{
+    margin-bottom:7px;
+    color:#82a2ff;
+    font-size:17px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.result-title:hover{
+    text-decoration:underline;
+}
+
+.result-description{
+    max-width:820px;
+    color:#a6b4c8;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-top:9px;
+}
+
+.tag{
+    padding:3px 7px;
+    color:#8294ad;
+    background:#142137;
+    border-radius:5px;
+    font-size:8px;
+}
+
+/* =========================
+   INTERNAL PAGES
+   ========================= */
+
+.internal{
+    min-height:100%;
+    padding:30px;
+}
+
+.internal-inner{
+    width:min(1050px,100%);
+    margin:auto;
+}
+
+.heading{
+    margin-bottom:22px;
+}
+
+.heading h1{
+    margin:0;
+    font-size:25px;
+}
+
+.heading p{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.card{
+    margin-bottom:14px;
+    padding:20px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:15px;
+}
+
+.card h2{
+    margin:0 0 15px;
+    font-size:14px;
+}
+
+.card p{
+    color:var(--text2);
+    font-size:11px;
+    line-height:1.6;
+}
+
+/* =========================
+   HISTORY
+   ========================= */
+
+.history-tools{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+}
+
+.history-search{
+    flex:1;
+    height:38px;
+    padding:0 12px;
+    color:white;
+    background:#0b1422;
+    border:1px solid var(--border);
+    border-radius:9px;
+}
+
+.history-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.history-icon{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    flex:0 0 38px;
+    background:var(--surface3);
+    border-radius:9px;
+}
+
+.history-main{
+    min-width:0;
+    flex:1;
+}
+
+.history-title{
+    overflow:hidden;
+    color:var(--text);
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:12px;
+    font-weight:700;
+}
+
+.history-url{
+    margin-top:4px;
+    overflow:hidden;
+    color:var(--muted);
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:9px;
+}
+
+.history-time{
+    color:var(--muted);
+    font-size:9px;
+}
+
+/* =========================
+   BOOKMARKS
+   ========================= */
+
+.bookmark-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+
+.bookmark-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:11px;
+    transition:var(--transition);
+}
+
+.bookmark-card:hover{
+    border-color:var(--border2);
+    background:var(--surface3);
+}
+
+.bookmark-icon{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    flex:0 0 38px;
+    border-radius:9px;
+    background:#1a2940;
+}
+
+.bookmark-main{
+    min-width:0;
+    flex:1;
+}
+
+.bookmark-title{
+    overflow:hidden;
+    color:white;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:11px;
+    font-weight:700;
+}
+
+.bookmark-url{
+    margin-top:4px;
+    overflow:hidden;
+    color:var(--muted);
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:9px;
+}
+
+.icon-button{
+    width:31px;
+    height:31px;
+    display:grid;
+    place-items:center;
+    color:var(--muted);
+    background:transparent;
+    border-radius:7px;
+}
+
+.icon-button:hover{
+    color:white;
+    background:var(--surface4);
+}
+
+/* =========================
+   SETTINGS
+   ========================= */
+
+.setting-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    min-height:62px;
+    border-bottom:1px solid var(--border);
+}
+
+.setting-row:last-child{
+    border-bottom:0;
+}
+
+.setting-name{
+    font-size:11px;
+    font-weight:700;
+}
+
+.setting-description{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:9px;
+}
+
+.switch{
+    position:relative;
+    width:45px;
+    height:25px;
+    flex:0 0 45px;
+}
+
+.switch input{
+    display:none;
+}
+
+.switch-track{
+    position:absolute;
+    inset:0;
+    background:#27364d;
+    border-radius:20px;
+    transition:var(--transition);
+}
+
+.switch-track::before{
+    content:"";
+    position:absolute;
+    width:19px;
+    height:19px;
+    left:3px;
+    top:3px;
+    background:white;
+    border-radius:50%;
+    transition:var(--transition);
+}
+
+.switch input:checked + .switch-track{
+    background:var(--primary);
+}
+
+.switch input:checked + .switch-track::before{
+    transform:translateX(20px);
+}
+
+.select{
+    min-width:150px;
+    height:35px;
+    padding:0 10px;
+    color:white;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:8px;
+}
+
+/* =========================
+   NOTES
+   ========================= */
+
+.notes-layout{
+    display:grid;
+    grid-template-columns:250px 1fr;
+    min-height:560px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:15px;
+    overflow:hidden;
+}
+
+.notes-list{
+    border-right:1px solid var(--border);
+    background:#0b131f;
+}
+
+.notes-list-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px;
+    border-bottom:1px solid var(--border);
+}
+
+.notes-list-title{
+    font-size:11px;
+    font-weight:800;
+}
+
+.notes-new{
+    width:28px;
+    height:28px;
+    color:white;
+    background:var(--primary);
+    border-radius:7px;
+}
+
+.note-item{
+    padding:12px;
+    border-bottom:1px solid rgba(38,55,81,.55);
+    cursor:pointer;
+}
+
+.note-item:hover{
+    background:var(--surface2);
+}
+
+.note-item.active{
+    background:
+        linear-gradient(
+            90deg,
+            rgba(102,124,255,.16),
+            transparent
+        );
+}
+
+.note-item-title{
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:10px;
+    font-weight:700;
+}
+
+.note-item-preview{
+    margin-top:4px;
+    overflow:hidden;
+    color:var(--muted);
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:8px;
+}
+
+.note-editor{
+    display:flex;
+    flex-direction:column;
+}
+
+.note-title-input{
+    height:52px;
+    padding:0 18px;
+    color:white;
+    background:transparent;
+    border:0;
+    border-bottom:1px solid var(--border);
+    font-size:17px;
+    font-weight:800;
+}
+
+.note-body{
+    flex:1;
+    min-height:400px;
+    padding:18px;
+    resize:none;
+    color:var(--text2);
+    background:transparent;
+    border:0;
+    line-height:1.7;
+}
+
+/* =========================
+   CALCULATOR
+   ========================= */
+
+.calculator{
+    width:min(390px,100%);
+    margin:auto;
+    padding:16px;
+    background:#0b121e;
+    border:1px solid var(--border);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+}
+
+.calc-display{
+    width:100%;
+    height:90px;
+    margin-bottom:12px;
+    padding:15px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:flex-end;
+    overflow:hidden;
+    color:white;
+    background:#070d17;
+    border:1px solid var(--border);
+    border-radius:11px;
+    font-size:30px;
+    font-weight:700;
+}
+
+.calc-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+}
+
+.calc-button{
+    height:55px;
+    color:var(--text2);
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:9px;
+    font-size:15px;
+    font-weight:700;
+}
+
+.calc-button:hover{
+    color:white;
+    background:var(--surface3);
+}
+
+.calc-button.operator{
+    color:#9caaff;
+    background:#171d38;
+}
+
+.calc-button.equals{
+    color:white;
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary2)
+    );
+}
+
+.calc-button.clear{
+    color:#ff8b9a;
+    background:#291923;
+}
+
+/* =========================
+   MODAL
+   ========================= */
+
+.modal-layer{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.58);
+    backdrop-filter:blur(7px);
+}
+
+.modal-layer.open{
+    display:flex;
+}
+
+.modal{
+    width:min(520px,100%);
+    max-height:90vh;
+    overflow:auto;
+    padding:22px;
+    background:#0d1726;
+    border:1px solid var(--border2);
+    border-radius:17px;
+    box-shadow:var(--shadow);
+}
+
+.modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+}
+
+.modal-title{
+    margin:0;
+    font-size:17px;
+}
+
+.modal-close{
+    width:31px;
+    height:31px;
+    color:var(--muted);
+    background:transparent;
+    border-radius:7px;
+}
+
+.modal-close:hover{
+    color:white;
+    background:var(--surface3);
+}
+
+/* =========================
+   CONTEXT MENU
+   ========================= */
+
+.context-menu{
+    position:fixed;
+    z-index:2000;
+    width:210px;
+    display:none;
+    padding:6px;
+    background:#0c1625;
+    border:1px solid var(--border2);
+    border-radius:11px;
+    box-shadow:var(--shadow);
+}
+
+.context-menu.open{
+    display:block;
+}
+
+.context-item{
+    width:100%;
+    height:34px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:0 10px;
+    color:var(--text2);
+    background:transparent;
+    border-radius:7px;
+    text-align:left;
+    font-size:10px;
+}
+
+.context-item:hover{
+    color:white;
+    background:var(--surface3);
+}
+
+.context-separator{
+    height:1px;
+    margin:5px 4px;
+    background:var(--border);
+}
+
+/* =========================
+   NOTIFICATIONS
+   ========================= */
+
+.notifications{
+    position:fixed;
+    z-index:3000;
+    right:18px;
+    bottom:35px;
+    width:min(340px,calc(100% - 36px));
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.notification{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:13px;
+    background:#101c2d;
+    border:1px solid var(--border2);
+    border-radius:11px;
+    box-shadow:var(--shadow);
+    animation:
+        notificationIn .22s ease;
+}
+
+@keyframes notificationIn{
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.notification-icon{
+    font-size:17px;
+}
+
+.notification-content{
+    flex:1;
+}
+
+.notification-title{
+    font-size:10px;
+    font-weight:800;
+}
+
+.notification-text{
+    margin-top:3px;
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.4;
+}
+
+/* =========================
+   STATUS BAR
+   ========================= */
+
+.statusbar{
+    height:22px;
+    flex:0 0 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 10px;
+    color:#61738d;
+    background:#070c14;
+    border-top:1px solid var(--border);
+    font-size:8px;
+}
+
+.status-left,
+.status-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.status-online{
+    color:var(--green);
+}
+
+/* =========================
+   EMPTY STATE
+   ========================= */
+
+.empty{
+    padding:70px 20px;
+    color:var(--muted);
+    text-align:center;
+}
+
+.empty-icon{
+    margin-bottom:12px;
+    font-size:42px;
+}
+
+.empty-title{
+    margin-bottom:6px;
+    color:var(--text2);
+    font-size:15px;
+    font-weight:800;
+}
+
+.empty-text{
+    font-size:10px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:62px;
+        flex-basis:62px;
+        padding:9px 7px;
+    }
+
+    .sidebar-label,
+    .sidebar-name,
+    .sidebar-count{
+        display:none;
+    }
+
+    .sidebar-item{
+        justify-content:center;
+        padding:0;
+    }
+
+    .sidebar-icon{
+        width:auto;
+    }
+
+    .quick-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .widgets{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:650px){
+
+    .brand{
+        min-width:auto;
+    }
+
+    .brand-title,
+    .brand-subtitle{
+        display:none;
+    }
+
+    .navigation{
+        gap:2px;
+    }
+
+    .nav-button{
+        width:31px;
+    }
+
+    .quick-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .bookmark-grid{
+        grid-template-columns:1fr;
+    }
+
+    .notes-layout{
+        grid-template-columns:1fr;
+    }
+
+    .notes-list{
+        max-height:180px;
+        border-right:0;
+        border-bottom:1px solid var(--border);
+        overflow:auto;
+    }
+
+    .home{
+        padding-top:40px;
+    }
+
+    .hero h1{
+        font-size:34px;
+    }
+
+    .hero-logo{
+        width:72px;
+        height:72px;
+        font-size:35px;
+    }
+
+}
+
+@media(max-width:450px){
+
+    .toolbar{
+        gap:4px;
+    }
+
+    .nav-button{
+        width:29px;
+        height:34px;
+    }
+
+    .toolbar-menu{
+        width:34px;
+    }
+
+    .quick-grid{
+        gap:7px;
+    }
+
+    .quick-card{
+        min-height:90px;
+    }
+
+    .search-buttons{
+        flex-direction:column;
+    }
+
+    .primary,
+    .secondary{
+        width:100%;
+    }
+
+    .internal{
+        padding:18px 12px;
+    }
+
+    .search-page{
+        padding:18px 12px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- =========================
+         TOP BAR
+         ========================= -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                N
+            </div>
+
+            <div>
+                <div class="brand-title">
+                    NexaBrowser
+                </div>
+
+                <div class="brand-subtitle">
+                    Private Web
+                </div>
+            </div>
+
+        </div>
+
+        <div class="top-actions">
+
+            <button
+                class="top-action"
+                title="Свернуть"
+            >−</button>
+
+            <button
+                class="top-action"
+                title="Развернуть"
+            >□</button>
+
+            <button
+                class="top-action close"
+                title="Закрыть"
+            >×</button>
+
+        </div>
+
+    </header>
+
+    <!-- =========================
+         TABS
+         ========================= -->
+
+    <div
+        class="tabs"
+        id="tabs"
+    ></div>
+
+    <!-- =========================
+         TOOLBAR
+         ========================= -->
+
+    <div class="toolbar">
+
+        <div class="nav-group">
+
+            <button
+                class="nav-button"
+                id="backButton"
+                title="Назад"
+                onclick="browserBack()"
+            >
+                ←
+            </button>
+
+            <button
+                class="nav-button"
+                id="forwardButton"
+                title="Вперёд"
+                onclick="browserForward()"
+            >
+                →
+            </button>
+
+            <button
+                class="nav-button"
+                title="Обновить"
+                onclick="reloadCurrentPage()"
+            >
+                ↻
+            </button>
+
+        </div>
+
+        <div class="address">
+
+            <span
+                class="security"
+                id="securityIcon"
+            >🔒</span>
+
+            <input
+                class="address-input"
+                id="addressInput"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Поиск или введите адрес"
+                onkeydown="addressKeyDown(event)"
+            >
+
+            <button
+                class="address-star"
+                id="bookmarkButton"
+                title="Добавить в закладки"
+                onclick="toggleCurrentBookmark()"
+            >
+                ☆
+            </button>
+
+        </div>
+
+        <button
+            class="toolbar-menu"
+            title="Меню"
+            onclick="toggleMenu()"
+        >
+            ⋮
+        </button>
+
+    </div>
+
+    <!-- =========================
+         MAIN
+         ========================= -->
+
+    <div class="main">
+
+        <aside
+            class="sidebar"
+            id="sidebar"
+        >
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-label">
+                    Навигация
+                </div>
+
+                <button
+                    class="sidebar-item active"
+                    data-page="home"
+                    onclick="openInternal('home')"
+                >
+                    <span class="sidebar-icon">🏠</span>
+                    <span class="sidebar-name">Главная</span>
+                </button>
+
+                <button
+                    class="sidebar-item"
+                    data-page="search"
+                    onclick="focusSearch()"
+                >
+                    <span class="sidebar-icon">🔎</span>
+                    <span class="sidebar-name">Поиск</span>
+                </button>
+
+                <button
+                    class="sidebar-item"
+                    data-page="history"
+                    onclick="openInternal('history')"
+                >
+                    <span class="sidebar-icon">🕘</span>
+                    <span class="sidebar-name">История</span>
+                    <span
+                        class="sidebar-count"
+                        id="historyCount"
+                    >0</span>
+                </button>
+
+                <button
+                    class="sidebar-item"
+                    data-page="bookmarks"
+                    onclick="openInternal('bookmarks')"
+                >
+                    <span class="sidebar-icon">⭐</span>
+                    <span class="sidebar-name">Закладки</span>
+                    <span
+                        class="sidebar-count"
+                        id="bookmarkCount"
+                    >0</span>
+                </button>
+
+            </div>
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-label">
+                    Инструменты
+                </div>
+
+                <button
+                    class="sidebar-item"
+                    data-page="notes"
+                    onclick="openInternal('notes')"
+                >
+                    <span class="sidebar-icon">📝</span>
+                    <span class="sidebar-name">Заметки</span>
+                </button>
+
+                <button
+                    class="sidebar-item"
+                    data-page="calculator"
+                    onclick="openInternal('calculator')"
+                >
+                    <span class="sidebar-icon">🧮</span>
+                    <span class="sidebar-name">Калькулятор</span>
+                </button>
+
+                <button
+                    class="sidebar-item"
+                    data-page="converter"
+                    onclick="openInternal('converter')"
+                >
+                    <span class="sidebar-icon">📐</span>
+                    <span class="sidebar-name">Конвертер</span>
+                </button>
+
+                <button
+                    class="sidebar-item"
+                    data-page="downloads"
+                    onclick="openInternal('downloads')"
+                >
+                    <span class="sidebar-icon">📥</span>
+                    <span class="sidebar-name">Загрузки</span>
+                </button>
+
+            </div>
+
+            <div class="sidebar-section">
+
+                <div class="sidebar-label">
+                    Система
+                </div>
+
+                <button
+                    class="sidebar-item"
+                    data-page="profile"
+                    onclick="openInternal('profile')"
+                >
+                    <span class="sidebar-icon">👤</span>
+                    <span class="sidebar-name">Профиль</span>
+                </button>
+
+                <button
+                    class="sidebar-item"
+                    data-page="settings"
+                    onclick="openInternal('settings')"
+                >
+                    <span class="sidebar-icon">⚙️</span>
+                    <span class="sidebar-name">Настройки</span>
+                </button>
+
+            </div>
+
+        </aside>
+
+        <main class="view">
+
+            <div
+                class="page"
+                id="page"
+            ></div>
+
+        </main>
+
+    </div>
+
+    <!-- =========================
+         STATUS BAR
+         ========================= -->
+
+    <footer class="statusbar">
+
+        <div class="status-left">
+
+            <span class="status-online">
+                ● Nexa Online
+            </span>
+
+            <span id="statusText">
+                Готово
+            </span>
+
+        </div>
+
+        <div class="status-right">
+
+            <span>
+                NexaBrowser
+            </span>
+
+            <span>
+                v1.0
+            </span>
+
+        </div>
+
+    </footer>
+
+</div>
+
+<!-- =========================
+     CONTEXT MENU
+     ========================= -->
+
+<div
+    class="context-menu"
+    id="contextMenu"
+>
+
+    <button
+        class="context-item"
+        onclick="browserBack()"
+    >
+        ← Назад
+    </button>
+
+    <button
+        class="context-item"
+        onclick="browserForward()"
+    >
+        → Вперёд
+    </button>
+
+    <button
+        class="context-item"
+        onclick="reloadCurrentPage()"
+    >
+        ↻ Обновить
+    </button>
+
+    <div class="context-separator"></div>
+
+    <button
+        class="context-item"
+        onclick="createTab()"
+    >
+        ＋ Новая вкладка
+    </button>
+
+    <button
+        class="context-item"
+        onclick="duplicateCurrentTab()"
+    >
+        ▣ Дублировать вкладку
+    </button>
+
+    <div class="context-separator"></div>
+
+    <button
+        class="context-item"
+        onclick="toggleCurrentBookmark()"
+    >
+        ☆ Добавить в закладки
+    </button>
+
+    <button
+        class="context-item"
+        onclick="openInternal('settings')"
+    >
+        ⚙ Настройки
+    </button>
+
+</div>
+
+<!-- =========================
+     MENU
+     ========================= -->
+
+<div
+    class="context-menu"
+    id="mainMenu"
+>
+
+    <button
+        class="context-item"
+        onclick="openInternal('history')"
+    >
+        🕘 История
+    </button>
+
+    <button
+        class="context-item"
+        onclick="openInternal('bookmarks')"
+    >
+        ⭐ Закладки
+    </button>
+
+    <button
+        class="context-item"
+        onclick="openInternal('notes')"
+    >
+        📝 Заметки
+    </button>
+
+    <div class="context-separator"></div>
+
+    <button
+        class="context-item"
+        onclick="openInternal('calculator')"
+    >
+        🧮 Калькулятор
+    </button>
+
+    <button
+        class="context-item"
+        onclick="openInternal('converter')"
+    >
+        📐 Конвертер
+    </button>
+
+    <div class="context-separator"></div>
+
+    <button
+        class="context-item"
+        onclick="openInternal('settings')"
+    >
+        ⚙️ Настройки
+    </button>
+
+    <button
+        class="context-item"
+        onclick="resetBrowser()"
+    >
+        🗑 Сбросить данные
+    </button>
+
+</div>
+
+<!-- =========================
+     MODAL
+     ========================= -->
+
+<div
+    class="modal-layer"
+    id="modalLayer"
+    onclick="modalBackgroundClick(event)"
+>
+
+    <div
+        class="modal"
+        id="modal"
+    >
+
+        <div class="modal-head">
+
+            <h2
+                class="modal-title"
+                id="modalTitle"
+            >
+                NexaBrowser
+            </h2>
+
+            <button
+                class="modal-close"
+                onclick="closeModal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     NOTIFICATIONS
+     ========================= -->
+
+<div
+    class="notifications"
+    id="notifications"
+></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   NEXABROWSER STATE
+   ========================================================= */
+
+const STORAGE_KEY="NEXABROWSER_STATE_V1";
+
+const DEFAULT_STATE={
+    tabs:[],
+    activeTabId:null,
+
+    history:[],
+    bookmarks:[],
+
+    notes:[],
+
+    downloads:[],
+
+    profile:{
+        name:"Nexa User",
+        avatar:"N",
+        color:"#667cff"
+    },
+
+    settings:{
+        theme:"dark",
+        suggestions:true,
+        animations:true,
+        saveHistory:true,
+        privateMode:false,
+        compactSidebar:false,
+        startup:"home"
+    }
+};
+
+let state=loadState();
+
+let calculatorValue="0";
+let calculatorOperator=null;
+let calculatorPrevious=null;
+let calculatorWaiting=false;
+
+let selectedNoteId=null;
+
+let currentConverterCategory="length";
+
+/* =========================================================
+   STORAGE
+   ========================================================= */
+
+function loadState(){
+
+    try{
+
+        const raw=
+            localStorage.getItem(STORAGE_KEY);
+
+        if(!raw){
+
+            return createDefaultState();
+
+        }
+
+        const parsed=
+            JSON.parse(raw);
+
+        return mergeState(
+            createDefaultState(),
+            parsed
+        );
+
+    }catch(error){
+
+        console.error(
+            "NexaBrowser storage error:",
+            error
+        );
+
+        return createDefaultState();
+
+    }
+
+}
+
+function createDefaultState(){
+
+    const firstTab=createTabObject();
+
+    return {
+
+        ...structuredClone(DEFAULT_STATE),
+
+        tabs:[firstTab],
+
+        activeTabId:firstTab.id
+
+    };
+
+}
+
+function mergeState(base,extra){
+
+    return {
+
+        ...base,
+        ...extra,
+
+        profile:{
+            ...base.profile,
+            ...(extra.profile || {})
+        },
+
+        settings:{
+            ...base.settings,
+            ...(extra.settings || {})
+        },
+
+        tabs:Array.isArray(extra.tabs)
+            ?extra.tabs
+            :base.tabs,
+
+        history:Array.isArray(extra.history)
+            ?extra.history
+            :base.history,
+
+        bookmarks:Array.isArray(extra.bookmarks)
+            ?extra.bookmarks
+            :base.bookmarks,
+
+        notes:Array.isArray(extra.notes)
+            ?extra.notes
+            :base.notes,
+
+        downloads:Array.isArray(extra.downloads)
+            ?extra.downloads
+            :base.downloads
+
+    };
+
+}
+
+function saveState(){
+
+    try{
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(state)
+        );
+
+    }catch(error){
+
+        notify(
+            "Ошибка",
+            "Не удалось сохранить данные браузера.",
+            "⚠️"
+        );
+
+    }
+
+}
+
+/* =========================================================
+   ID GENERATOR
+   ========================================================= */
+
+function uid(prefix="id"){
+
+    return (
+        prefix+
+        "_" +
+        Date.now().toString(36)+
+        "_" +
+        Math.random()
+            .toString(36)
+            .slice(2,9)
+    );
+
+}
+
+/* =========================================================
+   TAB OBJECT
+   ========================================================= */
+
+function createTabObject(){
+
+    return {
+
+        id:uid("tab"),
+
+        title:"Новая вкладка",
+
+        url:"nexa://home",
+
+        type:"home",
+
+        query:"",
+
+        createdAt:Date.now(),
+
+        navigation:[],
+
+        navigationIndex:-1
+
+    };
+
+}
+
+/* =========================================================
+   ACTIVE TAB
+   ========================================================= */
+
+function getActiveTab(){
+
+    return state.tabs.find(
+        tab=>tab.id===state.activeTabId
+    ) || null;
+
+}
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+function init(){
+
+    normalizeState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    updateCounters();
+
+    updateNavigationButtons();
+
+    updateClock();
+
+    setInterval(
+        updateClock,
+        1000
+    );
+
+    setupGlobalEvents();
+
+    notify(
+        "Добро пожаловать",
+        "NexaBrowser готов к работе.",
+        "🚀"
+    );
+
+}
+
+function normalizeState(){
+
+    if(
+        !Array.isArray(state.tabs) ||
+        state.tabs.length===0
+    ){
+
+        const tab=createTabObject();
+
+        state.tabs=[tab];
+
+        state.activeTabId=tab.id;
+
+    }
+
+    if(
+        !state.tabs.some(
+            tab=>tab.id===state.activeTabId
+        )
+    ){
+
+        state.activeTabId=
+            state.tabs[0].id;
+
+    }
+
+    state.tabs.forEach(tab=>{
+
+        if(!tab.navigation){
+
+            tab.navigation=[];
+
+        }
+
+        if(
+            typeof tab.navigationIndex!=="number"
+        ){
+
+            tab.navigationIndex=
+                tab.navigation.length-1;
+
+        }
+
+    });
+
+    saveState();
+
+}
+
+/* =========================================================
+   GLOBAL EVENTS
+   ========================================================= */
+
+function setupGlobalEvents(){
+
+    document.addEventListener(
+        "keydown",
+        handleGlobalKeyboard
+    );
+
+    document.addEventListener(
+        "contextmenu",
+        handleContextMenu
+    );
+
+    document.addEventListener(
+        "click",
+        handleDocumentClick
+    );
+
+}
+
+function handleGlobalKeyboard(event){
+
+    const ctrl=
+        event.ctrlKey ||
+        event.metaKey;
+
+    if(ctrl && event.key.toLowerCase()==="l"){
+
+        event.preventDefault();
+
+        focusAddress();
+
+        return;
+
+    }
+
+    if(ctrl && event.key.toLowerCase()==="t"){
+
+        event.preventDefault();
+
+        createTab();
+
+        return;
+
+    }
+
+    if(ctrl && event.key.toLowerCase()==="w"){
+
+        event.preventDefault();
+
+        closeCurrentTab();
+
+        return;
+
+    }
+
+    if(ctrl && event.key.toLowerCase()==="h"){
+
+        event.preventDefault();
+
+        openInternal("history");
+
+        return;
+
+    }
+
+    if(ctrl && event.key.toLowerCase()==="d"){
+
+        event.preventDefault();
+
+        toggleCurrentBookmark();
+
+        return;
+
+    }
+
+    if(event.altKey && event.key==="ArrowLeft"){
+
+        event.preventDefault();
+
+        browserBack();
+
+        return;
+
+    }
+
+    if(event.altKey && event.key==="ArrowRight"){
+
+        event.preventDefault();
+
+        browserForward();
+
+        return;
+
+    }
+
+    if(event.key==="F5"){
+
+        event.preventDefault();
+
+        reloadCurrentPage();
+
+        return;
+
+    }
+
+    if(event.key==="Escape"){
+
+        closeMenu();
+
+        closeContextMenu();
+
+    }
+
+}
+
+function handleContextMenu(event){
+
+    const target=
+        event.target;
+
+    if(
+        target.closest(".home-search") ||
+        target.closest(".address-input") ||
+        target.closest("textarea") ||
+        target.closest("input")
+    ){
+
+        return;
+
+    }
+
+    event.preventDefault();
+
+    showContextMenu(
+        event.clientX,
+        event.clientY
+    );
+
+}
+
+function handleDocumentClick(event){
+
+    const menu=
+        document.getElementById(
+            "mainMenu"
+        );
+
+    const context=
+        document.getElementById(
+            "contextMenu"
+        );
+
+    if(
+        !event.target.closest(
+            "#mainMenu"
+        )
+    ){
+
+        menu.classList.remove("open");
+
+    }
+
+    if(
+        !event.target.closest(
+            "#contextMenu"
+        )
+    ){
+
+        context.classList.remove("open");
+
+    }
+
+}
+
+/* =========================================================
+   TABS RENDER
+   ========================================================= */
+
+function renderTabs(){
+
+    const container=
+        document.getElementById(
+            "tabs"
+        );
+
+    container.innerHTML="";
+
+    state.tabs.forEach(tab=>{
+
+        const element=
+            document.createElement("div");
+
+        element.className=
+            "tab"+
+            (
+                tab.id===state.activeTabId
+                    ?" active"
+                    :""
+            );
+
+        element.dataset.id=
+            tab.id;
+
+        element.addEventListener(
+            "click",
+            ()=>{
+                activateTab(tab.id);
+            }
+        );
+
+        const icon=
+            tab.type==="search"
+                ?"🔎"
+                :tab.type==="history"
+                    ?"🕘"
+                    :tab.type==="bookmarks"
+                        ?"⭐"
+                        :tab.type==="settings"
+                            ?"⚙️"
+                            :tab.type==="notes"
+                                ?"📝"
+                                :tab.type==="calculator"
+                                    ?"🧮"
+                                    :tab.type==="converter"
+                                        ?"📐"
+                                        :"🌐";
+
+        const iconElement=
+            document.createElement("span");
+
+        iconElement.className=
+            "tab-icon";
+
+        iconElement.textContent=
+            icon;
+
+        const title=
+            document.createElement("span");
+
+        title.className=
+            "tab-title";
+
+        title.textContent=
+            tab.title ||
+            "Новая вкладка";
+
+        const close=
+            document.createElement("button");
+
+        close.className=
+            "tab-close";
+
+        close.textContent="×";
+
+        close.title=
+            "Закрыть вкладку";
+
+        close.addEventListener(
+            "click",
+            event=>{
+
+                event.stopPropagation();
+
+                closeTab(tab.id);
+
+            }
+        );
+
+        element.appendChild(iconElement);
+
+        element.appendChild(title);
+
+        element.appendChild(close);
+
+        container.appendChild(element);
+
+    });
+
+    const newButton=
+        document.createElement("button");
+
+    newButton.className=
+        "new-tab";
+
+    newButton.textContent="+";
+
+    newButton.title=
+        "Новая вкладка";
+
+    newButton.addEventListener(
+        "click",
+        createTab
+    );
+
+    container.appendChild(newButton);
+
+}
+
+/* =========================================================
+   CREATE TAB
+   ========================================================= */
+
+function createTab(){
+
+    const tab=
+        createTabObject();
+
+    state.tabs.push(tab);
+
+    state.activeTabId=
+        tab.id;
+
+    saveState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    updateNavigationButtons();
+
+    focusAddress();
+
+}
+
+/* =========================================================
+   ACTIVATE TAB
+   ========================================================= */
+
+function activateTab(id){
+
+    const exists=
+        state.tabs.some(
+            tab=>tab.id===id
+        );
+
+    if(!exists){
+
+        return;
+
+    }
+
+    state.activeTabId=id;
+
+    saveState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    updateNavigationButtons();
+
+    updateBookmarkButton();
+
+}
+
+/* =========================================================
+   CLOSE TAB
+   ========================================================= */
+
+function closeTab(id){
+
+    const index=
+        state.tabs.findIndex(
+            tab=>tab.id===id
+        );
+
+    if(index===-1){
+
+        return;
+
+    }
+
+    const closingActive=
+        state.activeTabId===id;
+
+    state.tabs.splice(
+        index,
+        1
+    );
+
+    if(state.tabs.length===0){
+
+        const newTab=
+            createTabObject();
+
+        state.tabs.push(newTab);
+
+        state.activeTabId=
+            newTab.id;
+
+    }else if(closingActive){
+
+        const newIndex=
+            Math.max(
+                0,
+                Math.min(
+                    index,
+                    state.tabs.length-1
+                )
+            );
+
+        state.activeTabId=
+            state.tabs[newIndex].id;
+
+    }
+
+    saveState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    updateNavigationButtons();
+
+    updateBookmarkButton();
+
+}
+
+function closeCurrentTab(){
+
+    const tab=
+        getActiveTab();
+
+    if(tab){
+
+        closeTab(tab.id);
+
+    }
+
+}
+
+function duplicateCurrentTab(){
+
+    const current=
+        getActiveTab();
+
+    if(!current){
+
+        return;
+
+    }
+
+    const copy={
+        ...current,
+
+        id:uid("tab"),
+
+        navigation:
+            Array.isArray(current.navigation)
+                ?[...current.navigation]
+                :[],
+
+        createdAt:Date.now()
+
+    };
+
+    const index=
+        state.tabs.findIndex(
+            tab=>tab.id===current.id
+        );
+
+    state.tabs.splice(
+        index+1,
+        0,
+        copy
+    );
+
+    state.activeTabId=
+        copy.id;
+
+    saveState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    notify(
+        "Вкладка создана",
+        "Текущая вкладка продублирована.",
+        "▣"
+    );
+
+}
+
+/* =========================================================
+   PAGE ROUTER
+   ========================================================= */
+
+function renderCurrentPage(){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    updateAddress();
+
+    updateBookmarkButton();
+
+    updateSidebar();
+
+    switch(tab.type){
+
+        case "home":
+
+            renderHome();
+
+            break;
+
+        case "search":
+
+            renderSearchPage(
+                tab.query
+            );
+
+            break;
+
+        case "history":
+
+            renderHistory();
+
+            break;
+
+        case "bookmarks":
+
+            renderBookmarks();
+
+            break;
+
+        case "settings":
+
+            renderSettings();
+
+            break;
+
+        case "notes":
+
+            renderNotes();
+
+            break;
+
+        case "calculator":
+
+            renderCalculator();
+
+            break;
+
+        case "converter":
+
+            renderConverter();
+
+            break;
+
+        case "downloads":
+
+            renderDownloads();
+
+            break;
+
+        case "profile":
+
+            renderProfile();
+
+            break;
+
+        default:
+
+            tab.type="home";
+
+            tab.url="nexa://home";
+
+            renderHome();
+
+            break;
+
+    }
+
+    page.scrollTop=0;
+
+}
+
+/* =========================================================
+   HOME RENDER
+   ========================================================= */
+
+function renderHome(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="home">
+
+            <div class="home-inner">
+
+                <section class="hero">
+
+                    <div class="hero-logo">
+                        N
+                    </div>
+
+                    <h1>
+                        NexaBrowser
+                    </h1>
+
+                    <p>
+                        Твой браузер.
+                        Твой поиск.
+                        Твой интернет.
+                    </p>
+
+                </section>
+
+                <section class="search-area">
+
+                    <div class="search-wrapper">
+
+                        <span class="search-icon">
+                            🔎
+                        </span>
+
+                        <input
+                            id="homeSearch"
+                            class="home-search"
+                            autocomplete="off"
+                            spellcheck="false"
+                            placeholder="Ищи что угодно в NexaSearch..."
+                        >
+
+                    </div>
+
+                    <div class="search-buttons">
+
+                        <button
+                            class="primary"
+                            onclick="performHomeSearch()"
+                        >
+                            🔎 Искать в NexaSearch
+                        </button>
+
+                        <button
+                            class="secondary"
+                            onclick="luckySearch()"
+                        >
+                            🎲 Мне повезёт
+                        </button>
+
+                    </div>
+
+                </section>
+
+                <section class="quick-grid">
+
+                    ${quickCard(
+                        "🔎",
+                        "Поиск",
+                        "NexaSearch",
+                        "focusSearch()"
+                    )}
+
+                    ${quickCard(
+                        "⭐",
+                        "Закладки",
+                        "Сохранённые сайты",
+                        "openInternal('bookmarks')"
+                    )}
+
+                    ${quickCard(
+                        "🕘",
+                        "История",
+                        "Посещённые страницы",
+                        "openInternal('history')"
+                    )}
+
+                    ${quickCard(
+                        "📝",
+                        "Заметки",
+                        "Личные заметки",
+                        "openInternal('notes')"
+                    )}
+
+                    ${quickCard(
+                        "🧮",
+                        "Калькулятор",
+                        "Быстрые вычисления",
+                        "openInternal('calculator')"
+                    )}
+
+                    ${quickCard(
+                        "⚙️",
+                        "Настройки",
+                        "Настрой NexaBrowser",
+                        "openInternal('settings')"
+                    )}
+
+                </section>
+
+                <section class="widgets">
+
+                    <div class="widget">
+
+                        <div class="widget-head">
+
+                            <span class="widget-title">
+                                ЛОКАЛЬНОЕ ВРЕМЯ
+                            </span>
+
+                            <span class="widget-icon">
+                                🕐
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="clock"
+                            id="homeClock"
+                        >
+                            --:--
+                        </div>
+
+                        <div
+                            class="date"
+                            id="homeDate"
+                        >
+                            Загрузка...
+                        </div>
+
+                    </div>
+
+                    <div class="widget">
+
+                        <div class="widget-head">
+
+                            <span class="widget-title">
+                                СОСТОЯНИЕ
+                            </span>
+
+                            <span class="widget-icon">
+                                🟢
+                            </span>
+
+                        </div>
+
+                        <div
+                            style="
+                                font-size:20px;
+                                font-weight:800;
+                            "
+                        >
+                            Всё работает
+                        </div>
+
+                        <div class="date">
+                            Данные браузера хранятся локально
+                        </div>
+
+                    </div>
+
+                    <div class="widget">
+
+                        <div class="widget-head">
+
+                            <span class="widget-title">
+                                БЫСТРАЯ КОМАНДА
+                            </span>
+
+                            <span class="widget-icon">
+                                ⌨️
+                            </span>
+
+                        </div>
+
+                        <div
+                            style="
+                                font-size:14px;
+                                font-weight:800;
+                            "
+                        >
+                            Ctrl + L
+                        </div>
+
+                        <div class="date">
+                            Перейти к адресной строке
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    `;
+
+    const input=
+        document.getElementById(
+            "homeSearch"
+        );
+
+    input.addEventListener(
+        "keydown",
+        event=>{
+
+            if(event.key==="Enter"){
+
+                performHomeSearch();
+
+            }
+
+        }
+    );
+
+    updateClock();
+
+}
+
+/* =========================================================
+   QUICK CARD
+   ========================================================= */
+
+function quickCard(
+    icon,
+    title,
+    description,
+    action
+){
+
+    return `
+
+        <button
+            class="quick-card"
+            onclick="${action}"
+        >
+
+            <div class="quick-icon">
+                ${icon}
+            </div>
+
+            <div class="quick-title">
+                ${escapeHTML(title)}
+            </div>
+
+            <div class="quick-description">
+                ${escapeHTML(description)}
+            </div>
+
+        </button>
+
+    `;
+
+}
+
+/* =========================================================
+   HOME SEARCH
+   ========================================================= */
+
+function performHomeSearch(){
+
+    const input=
+        document.getElementById(
+            "homeSearch"
+        );
+
+    if(!input){
+
+        return;
+
+    }
+
+    const query=
+        input.value.trim();
+
+    if(!query){
+
+        input.focus();
+
+        notify(
+            "NexaSearch",
+            "Введите запрос.",
+            "🔎"
+        );
+
+        return;
+
+    }
+
+    navigateSearch(query);
+
+}
+
+/* =========================================================
+   LUCKY SEARCH
+   ========================================================= */
+
+function luckySearch(){
+
+    const items=
+        SEARCH_INDEX;
+
+    const item=
+        items[
+            Math.floor(
+                Math.random()*items.length
+            )
+        ];
+
+    if(item){
+
+        navigate(item.url);
+
+        notify(
+            "Мне повезёт",
+            item.title,
+            "🎲"
+        );
+
+    }
+
+}
+
+/* =========================================================
+   SEARCH INDEX
+   ========================================================= */
+
+const SEARCH_INDEX=[
+
+    {
+        title:"MDN Web Docs",
+        url:"https://developer.mozilla.org/",
+        description:
+            "Документация по HTML, CSS, JavaScript и современным веб-технологиям.",
+        tags:[
+            "html",
+            "css",
+            "javascript",
+            "web"
+        ]
+    },
+
+    {
+        title:"GitHub",
+        url:"https://github.com/",
+        description:
+            "Платформа для разработки программного обеспечения и совместной работы над кодом.",
+        tags:[
+            "code",
+            "git",
+            "programming"
+        ]
+    },
+
+    {
+        title:"Wikipedia",
+        url:"https://www.wikipedia.org/",
+        description:
+            "Свободная многоязычная энциклопедия с миллионами статей.",
+        tags:[
+            "knowledge",
+            "encyclopedia"
+        ]
+    },
+
+    {
+        title:"OpenStreetMap",
+        url:"https://www.openstreetmap.org/",
+        description:
+            "Открытая карта мира, создаваемая сообществом.",
+        tags:[
+            "maps",
+            "world",
+            "navigation"
+        ]
+    },
+
+    {
+        title:"W3C",
+        url:"https://www.w3.org/",
+        description:
+            "Международная организация, развивающая открытые веб-стандарты.",
+        tags:[
+            "web",
+            "standards",
+            "html"
+        ]
+    },
+
+    {
+        title:"Web.dev",
+        url:"https://web.dev/",
+        description:
+            "Практические материалы по производительности и современной веб-разработке.",
+        tags:[
+            "web",
+            "performance",
+            "development"
+        ]
+    },
+
+    {
+        title:"ECMAScript Specification",
+        url:"https://tc39.es/ecma262/",
+        description:
+            "Официальная спецификация языка ECMAScript.",
+        tags:[
+            "javascript",
+            "ecmascript",
+            "language"
+        ]
+    },
+
+    {
+        title:"CSS Tricks",
+        url:"https://css-tricks.com/",
+        description:
+            "Материалы, статьи и практические решения для CSS и фронтенд-разработки.",
+        tags:[
+            "css",
+            "frontend",
+            "design"
+        ]
+    },
+
+    {
+        title:"Stack Overflow",
+        url:"https://stackoverflow.com/",
+        description:
+            "Сообщество вопросов и ответов для разработчиков.",
+        tags:[
+            "programming",
+            "questions",
+            "development"
+        ]
+    },
+
+    {
+        title:"npm",
+        url:"https://www.npmjs.com/",
+        description:
+            "Реестр пакетов JavaScript и Node.js.",
+        tags:[
+            "javascript",
+            "node",
+            "packages"
+        ]
+    },
+
+    {
+        title:"Google",
+        url:"https://www.google.com/",
+        description:
+            "Поисковая система Google.",
+        tags:[
+            "search",
+            "web"
+        ]
+    },
+
+    {
+        title:"Bing",
+        url:"https://www.bing.com/",
+        description:
+            "Поисковая система Microsoft Bing.",
+        tags:[
+            "search",
+            "microsoft"
+        ]
+    },
+
+    {
+        title:"DuckDuckGo",
+        url:"https://duckduckgo.com/",
+        description:
+            "Поисковая система с акцентом на конфиденциальность.",
+        tags:[
+            "search",
+            "privacy"
+        ]
+    },
+
+    {
+        title:"Chrome",
+        url:"https://www.google.com/chrome/",
+        description:
+            "Веб-браузер Google Chrome.",
+        tags:[
+            "browser",
+            "google"
+        ]
+    },
+
+    {
+        title:"Firefox",
+        url:"https://www.mozilla.org/firefox/",
+        description:
+            "Браузер Mozilla Firefox.",
+        tags:[
+            "browser",
+            "mozilla"
+        ]
+    },
+
+    {
+        title:"Opera",
+        url:"https://www.opera.com/",
+        description:
+            "Веб-браузер Opera с дополнительными функциями.",
+        tags:[
+            "browser",
+            "opera"
+        ]
+    },
+
+    {
+        title:"React",
+        url:"https://react.dev/",
+        description:
+            "Библиотека для создания пользовательских интерфейсов.",
+        tags:[
+            "javascript",
+            "react",
+            "frontend"
+        ]
+    },
+
+    {
+        title:"Vue.js",
+        url:"https://vuejs.org/",
+        description:
+            "Прогрессивный JavaScript-фреймворк для создания интерфейсов.",
+        tags:[
+            "javascript",
+            "vue",
+            "frontend"
+        ]
+    },
+
+    {
+        title:"Node.js",
+        url:"https://nodejs.org/",
+        description:
+            "Среда выполнения JavaScript вне браузера.",
+        tags:[
+            "javascript",
+            "node",
+            "backend"
+        ]
+    },
+
+    {
+        title:"Python",
+        url:"https://www.python.org/",
+        description:
+            "Популярный язык программирования общего назначения.",
+        tags:[
+            "python",
+            "programming"
+        ]
+    },
+
+    {
+        title:"TypeScript",
+        url:"https://www.typescriptlang.org/",
+        description:
+            "Язык программирования, расширяющий JavaScript типами.",
+        tags:[
+            "typescript",
+            "javascript"
+        ]
+    },
+
+    {
+        title:"Three.js",
+        url:"https://threejs.org/",
+        description:
+            "JavaScript-библиотека для 3D-графики в браузере.",
+        tags:[
+            "javascript",
+            "3d",
+            "webgl"
+        ]
+    },
+
+    {
+        title:"WebGL",
+        url:"https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API",
+        description:
+            "API для аппаратно ускоренной 2D и 3D графики в веб-браузерах.",
+        tags:[
+            "webgl",
+            "graphics",
+            "3d"
+        ]
+    }
+
+];
+
+/* =========================================================
+   SEARCH ENGINE
+   ========================================================= */
+
+function performSearch(query){
+
+    const normalized=
+        query
+            .trim()
+            .toLowerCase();
+
+    if(!normalized){
+
+        return [];
+
+    }
+
+    const words=
+        normalized
+            .split(/\s+/)
+            .filter(Boolean);
+
+    return SEARCH_INDEX
+        .map(item=>{
+
+            let score=0;
+
+            const title=
+                item.title.toLowerCase();
+
+            const description=
+                item.description.toLowerCase();
+
+            const tags=
+                item.tags.join(" ").toLowerCase();
+
+            const full=
+                title+
+                " "+
+                description+
+                " "+
+                tags;
+
+            words.forEach(word=>{
+
+                if(title===word){
+
+                    score+=100;
+
+                }
+
+                if(title.includes(word)){
+
+                    score+=30;
+
+                }
+
+                if(tags.includes(word)){
+
+                    score+=20;
+
+                }
+
+                if(description.includes(word)){
+
+                    score+=8;
+
+                }
+
+                if(full.includes(word)){
+
+                    score+=2;
+
+                }
+
+            });
+
+            return {
+                item,
+                score
+            };
+
+        })
+        .filter(
+            result=>result.score>0
+        )
+        .sort(
+            (a,b)=>
+                b.score-a.score
+        )
+        .map(
+            result=>result.item
+        );
+
+}
+
+/* =========================================================
+   SEARCH PAGE
+   ========================================================= */
+
+function renderSearchPage(query){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    const results=
+        performSearch(query);
+
+    page.innerHTML=`
+
+        <div class="search-page">
+
+            <div class="results">
+
+                <div class="results-head">
+
+                    <h2>
+                        Результаты NexaSearch
+                    </h2>
+
+                    <span class="results-info">
+                        ${results.length}
+                        результатов
+                    </span>
+
+                </div>
+
+                ${
+                    results.length
+                        ?results
+                            .map(
+                                createResultHTML
+                            )
+                            .join("")
+                        :`
+                            <div class="empty">
+
+                                <div class="empty-icon">
+                                    🔎
+                                </div>
+
+                                <div class="empty-title">
+                                    Ничего не найдено
+                                </div>
+
+                                <div class="empty-text">
+                                    Попробуй изменить поисковый запрос.
+                                </div>
+
+                            </div>
+                        `
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function createResultHTML(item){
+
+    return `
+
+        <article class="result">
+
+            <div class="result-url">
+                ${escapeHTML(item.url)}
+            </div>
+
+            <div
+                class="result-title"
+                onclick="navigate('${escapeAttribute(item.url)}')"
+            >
+                ${escapeHTML(item.title)}
+            </div>
+
+            <div class="result-description">
+                ${escapeHTML(item.description)}
+            </div>
+
+            <div class="tags">
+
+                ${item.tags
+                    .map(
+                        tag=>
+                            `<span class="tag">
+                                ${escapeHTML(tag)}
+                            </span>`
+                    )
+                    .join("")
+                }
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+/* =========================================================
+   SEARCH NAVIGATION
+   ========================================================= */
+
+function navigateSearch(query){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    tab.type="search";
+
+    tab.query=query;
+
+    tab.title=
+        query.length>25
+            ?query.slice(0,25)+"…"
+            :"Поиск: "+query;
+
+    tab.url=
+        "nexa://search?q="+
+        encodeURIComponent(query);
+
+    addNavigation(
+        tab,
+        tab.url
+    );
+
+    addHistory(
+        tab.title,
+        tab.url
+    );
+
+    saveState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    updateNavigationButtons();
+
+}
+
+/* =========================================================
+   GENERIC NAVIGATION
+   ========================================================= */
+
+function navigate(input){
+
+    const value=
+        String(input || "").trim();
+
+    if(!value){
+
+        return;
+
+    }
+
+    if(
+        value.startsWith("nexa://")
+    ){
+
+        navigateInternal(
+            value
+        );
+
+        return;
+
+    }
+
+    if(
+        looksLikeURL(value)
+    ){
+
+        let url=value;
+
+        if(
+            !/^https?:\/\//i.test(url)
+        ){
+
+            url=
+                "https://"+
+                url;
+
+        }
+
+        navigateExternal(
+            url
+        );
+
+        return;
+
+    }
+
+    navigateSearch(value);
+
+}
+
+/* =========================================================
+   URL DETECTION
+   ========================================================= */
+
+function looksLikeURL(value){
+
+    if(
+        /^https?:\/\//i.test(value)
+    ){
+
+        return true;
+
+    }
+
+    if(
+        /^localhost(?::\d+)?/i.test(value)
+    ){
+
+        return true;
+
+    }
+
+    if(
+        /^[a-z0-9-]+(\.[a-z0-9-]+)+/i.test(value)
+    ){
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+/* =========================================================
+   EXTERNAL NAVIGATION
+   ========================================================= */
+
+function navigateExternal(url){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    tab.type="external";
+
+    tab.url=url;
+
+    tab.title=
+        getDomainName(url);
+
+    addNavigation(
+        tab,
+        url
+    );
+
+    addHistory(
+        tab.title,
+        url
+    );
+
+    saveState();
+
+    renderTabs();
+
+    renderExternalPage(url);
+
+    updateNavigationButtons();
+
+    updateBookmarkButton();
+
+}
+
+/* =========================================================
+   EXTERNAL PAGE
+   ========================================================= */
+
+function renderExternalPage(url){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    const safeURL=
+        escapeAttribute(url);
+
+    page.innerHTML=`
+
+        <div
+            class="internal"
+            style="
+                min-height:100%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+            "
+        >
+
+            <div
+                class="card"
+                style="
+                    width:min(620px,100%);
+                    text-align:center;
+                "
+            >
+
+                <div
+                    style="
+                        font-size:42px;
+                        margin-bottom:15px;
+                    "
+                >
+                    🌐
+                </div>
+
+                <h2
+                    style="
+                        margin:0 0 8px;
+                        font-size:20px;
+                    "
+                >
+                    Внешний сайт
+                </h2>
+
+                <p
+                    style="
+                        color:var(--muted);
+                        margin-bottom:20px;
+                    "
+                >
+                    NexaBrowser подготовил переход
+                    на внешний адрес.
+                </p>
+
+                <div
+                    style="
+                        padding:12px;
+                        margin-bottom:15px;
+                        overflow:hidden;
+                        color:var(--green);
+                        background:#09111d;
+                        border:1px solid var(--border);
+                        border-radius:9px;
+                        font-size:11px;
+                        word-break:break-all;
+                    "
+                >
+                    ${escapeHTML(url)}
+                </div>
+
+                <button
+                    class="primary"
+                    onclick="openExternal('${safeURL}')"
+                >
+                    🌐 Открыть сайт
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+/* =========================================================
+   OPEN EXTERNAL
+   ========================================================= */
+
+function openExternal(url){
+
+    try{
+
+        window.open(
+            url,
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+        notify(
+            "Сайт открыт",
+            getDomainName(url),
+            "🌐"
+        );
+
+    }catch(error){
+
+        notify(
+            "Ошибка",
+            "Не удалось открыть адрес.",
+            "⚠️"
+        );
+
+    }
+
+}
+
+/* =========================================================
+   INTERNAL NAVIGATION
+   ========================================================= */
+
+function navigateInternal(url){
+
+    const routes={
+        "nexa://home":"home",
+        "nexa://history":"history",
+        "nexa://bookmarks":"bookmarks",
+        "nexa://settings":"settings",
+        "nexa://notes":"notes",
+        "nexa://calculator":"calculator",
+        "nexa://converter":"converter",
+        "nexa://downloads":"downloads",
+        "nexa://profile":"profile"
+    };
+
+    const route=
+        routes[url];
+
+    if(!route){
+
+        const match=
+            url.match(
+                /^nexa:\/\/search\?q=(.*)$/i
+            );
+
+        if(match){
+
+            const query=
+                decodeURIComponent(
+                    match[1]
+                );
+
+            navigateSearch(query);
+
+            return;
+
+        }
+
+        openInternal("home");
+
+        return;
+
+    }
+
+    openInternal(route);
+
+}
+
+/* =========================================================
+   OPEN INTERNAL PAGE
+   ========================================================= */
+
+function openInternal(type){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    const titles={
+        home:"Новая вкладка",
+        history:"История",
+        bookmarks:"Закладки",
+        settings:"Настройки",
+        notes:"Заметки",
+        calculator:"Калькулятор",
+        converter:"Конвертер",
+        downloads:"Загрузки",
+        profile:"Профиль"
+    };
+
+    tab.type=type;
+
+    tab.title=
+        titles[type] ||
+        "NexaBrowser";
+
+    tab.url=
+        "nexa://"+
+        type;
+
+    tab.query="";
+
+    addNavigation(
+        tab,
+        tab.url
+    );
+
+    saveState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    updateNavigationButtons();
+
+}
+
+/* =========================================================
+   ADDRESS INPUT
+   ========================================================= */
+
+function addressKeyDown(event){
+
+    if(event.key!=="Enter"){
+
+        return;
+
+    }
+
+    const input=
+        document.getElementById(
+            "addressInput"
+        );
+
+    const value=
+        input.value.trim();
+
+    navigate(value);
+
+}
+
+function updateAddress(){
+
+    const input=
+        document.getElementById(
+            "addressInput"
+        );
+
+    const tab=
+        getActiveTab();
+
+    if(!input || !tab){
+
+        return;
+
+    }
+
+    if(tab.type==="search"){
+
+        input.value=
+            tab.query;
+
+        return;
+
+    }
+
+    if(tab.url==="nexa://home"){
+
+        input.value="";
+
+        return;
+
+    }
+
+    input.value=
+        tab.url;
+
+}
+
+/* =========================================================
+   ADDRESS FOCUS
+   ========================================================= */
+
+function focusAddress(){
+
+    const input=
+        document.getElementById(
+            "addressInput"
+        );
+
+    if(!input){
+
+        return;
+
+    }
+
+    input.focus();
+
+    input.select();
+
+}
+
+function focusSearch(){
+
+    const tab=
+        getActiveTab();
+
+    if(
+        tab &&
+        tab.type==="home"
+    ){
+
+        renderHome();
+
+        setTimeout(
+            ()=>{
+                const input=
+                    document.getElementById(
+                        "homeSearch"
+                    );
+
+                input?.focus();
+
+            },
+            0
+        );
+
+        return;
+
+    }
+
+    openInternal("home");
+
+    setTimeout(
+        ()=>{
+            const input=
+                document.getElementById(
+                    "homeSearch"
+                );
+
+            input?.focus();
+
+        },
+        0
+    );
+
+}
+
+/* =========================================================
+   NAVIGATION HISTORY
+   ========================================================= */
+
+function addNavigation(tab,url){
+
+    if(!tab.navigation){
+
+        tab.navigation=[];
+
+    }
+
+    if(
+        typeof tab.navigationIndex!=="number"
+    ){
+
+        tab.navigationIndex=
+            tab.navigation.length-1;
+
+    }
+
+    const current=
+        tab.navigation[
+            tab.navigationIndex
+        ];
+
+    if(current===url){
+
+        return;
+
+    }
+
+    if(
+        tab.navigationIndex<
+        tab.navigation.length-1
+    ){
+
+        tab.navigation=
+            tab.navigation.slice(
+                0,
+                tab.navigationIndex+1
+            );
+
+    }
+
+    tab.navigation.push(url);
+
+    tab.navigationIndex=
+        tab.navigation.length-1;
+
+}
+
+/* =========================================================
+   BACK
+   ========================================================= */
+
+function browserBack(){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    if(
+        tab.navigationIndex<=0
+    ){
+
+        notify(
+            "Навигация",
+            "Назад идти некуда.",
+            "←"
+        );
+
+        return;
+
+    }
+
+    tab.navigationIndex--;
+
+    const url=
+        tab.navigation[
+            tab.navigationIndex
+        ];
+
+    loadNavigationURL(
+        tab,
+        url
+    );
+
+}
+
+/* =========================================================
+   FORWARD
+   ========================================================= */
+
+function browserForward(){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    if(
+        tab.navigationIndex>=
+        tab.navigation.length-1
+    ){
+
+        notify(
+            "Навигация",
+            "Вперёд идти некуда.",
+            "→"
+        );
+
+        return;
+
+    }
+
+    tab.navigationIndex++;
+
+    const url=
+        tab.navigation[
+            tab.navigationIndex
+        ];
+
+    loadNavigationURL(
+        tab,
+        url
+    );
+
+}
+
+/* =========================================================
+   LOAD NAVIGATION URL
+   ========================================================= */
+
+function loadNavigationURL(
+    tab,
+    url
+){
+
+    if(
+        url.startsWith(
+            "nexa://"
+        )
+    ){
+
+        const searchMatch=
+            url.match(
+                /^nexa:\/\/search\?q=(.*)$/i
+            );
+
+        if(searchMatch){
+
+            tab.type="search";
+
+            tab.query=
+                decodeURIComponent(
+                    searchMatch[1]
+                );
+
+            tab.title=
+                "Поиск: "+
+                tab.query;
+
+            tab.url=url;
+
+            saveState();
+
+            renderTabs();
+
+            renderCurrentPage();
+
+            updateNavigationButtons();
+
+            return;
+
+        }
+
+        const type=
+            url
+                .replace(
+                    "nexa://",
+                    ""
+                );
+
+        if(
+            [
+                "home",
+                "history",
+                "bookmarks",
+                "settings",
+                "notes",
+                "calculator",
+                "converter",
+                "downloads",
+                "profile"
+            ].includes(type)
+        ){
+
+            tab.type=type;
+
+            tab.url=url;
+
+            tab.title=
+                type.charAt(0)
+                    .toUpperCase()+
+                type.slice(1);
+
+            saveState();
+
+            renderTabs();
+
+            renderCurrentPage();
+
+            updateNavigationButtons();
+
+            return;
+
+        }
+
+    }
+
+    tab.type="external";
+
+    tab.url=url;
+
+    tab.title=
+        getDomainName(url);
+
+    saveState();
+
+    renderTabs();
+
+    renderExternalPage(url);
+
+    updateNavigationButtons();
+
+}
+
+/* =========================================================
+   RELOAD
+   ========================================================= */
+
+function reloadCurrentPage(){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    renderCurrentPage();
+
+    setStatus(
+        "Страница обновлена"
+    );
+
+}
+
+/* =========================================================
+   NAVIGATION BUTTONS
+   ========================================================= */
+
+function updateNavigationButtons(){
+
+    const tab=
+        getActiveTab();
+
+    const back=
+        document.getElementById(
+            "backButton"
+        );
+
+    const forward=
+        document.getElementById(
+            "forwardButton"
+        );
+
+    if(!tab){
+
+        return;
+
+    }
+
+    back.disabled=
+        tab.navigationIndex<=0;
+
+    forward.disabled=
+        tab.navigationIndex>=
+        tab.navigation.length-1;
+
+}
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+function addHistory(
+    title,
+    url
+){
+
+    if(
+        state.settings.privateMode ||
+        !state.settings.saveHistory
+    ){
+
+        return;
+
+    }
+
+    state.history.unshift({
+
+        id:uid("history"),
+
+        title:
+            title ||
+            getDomainName(url),
+
+        url,
+
+        timestamp:Date.now()
+
+    });
+
+    if(
+        state.history.length>500
+    ){
+
+        state.history=
+            state.history.slice(
+                0,
+                500
+            );
+
+    }
+
+    saveState();
+
+    updateCounters();
+
+}
+
+/* =========================================================
+   HISTORY PAGE
+   ========================================================= */
+
+function renderHistory(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        🕘 История
+                    </h1>
+
+                    <p>
+                        Все посещённые страницы NexaBrowser.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="history-tools">
+
+                        <input
+                            id="historySearch"
+                            class="history-search"
+                            placeholder="Поиск по истории..."
+                            oninput="filterHistory(this.value)"
+                        >
+
+                        <button
+                            class="secondary"
+                            onclick="clearHistory()"
+                        >
+                            Очистить
+                        </button>
+
+                    </div>
+
+                    <div id="historyList">
+
+                        ${historyHTML(
+                            state.history
+                        )}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function historyHTML(items){
+
+    if(!items.length){
+
+        return `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🕘
+                </div>
+
+                <div class="empty-title">
+                    История пуста
+                </div>
+
+                <div class="empty-text">
+                    Здесь появятся посещённые страницы.
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    return items
+        .map(item=>`
+
+            <div class="history-row">
+
+                <div class="history-icon">
+                    🌐
+                </div>
+
+                <div
+                    class="history-main"
+                    onclick="navigate('${escapeAttribute(item.url)}')"
+                    style="cursor:pointer"
+                >
+
+                    <div class="history-title">
+                        ${escapeHTML(item.title)}
+                    </div>
+
+                    <div class="history-url">
+                        ${escapeHTML(item.url)}
+                    </div>
+
+                </div>
+
+                <div class="history-time">
+                    ${formatTime(item.timestamp)}
+                </div>
+
+                <button
+                    class="icon-button"
+                    title="Удалить"
+                    onclick="deleteHistoryItem('${item.id}')"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        `)
+        .join("");
+
+}
+
+/* =========================================================
+   FILTER HISTORY
+   ========================================================= */
+
+function filterHistory(value){
+
+    const query=
+        value
+            .trim()
+            .toLowerCase();
+
+    const filtered=
+        state.history.filter(
+            item=>
+                item.title
+                    .toLowerCase()
+                    .includes(query) ||
+                item.url
+                    .toLowerCase()
+                    .includes(query)
+        );
+
+    const list=
+        document.getElementById(
+            "historyList"
+        );
+
+    if(list){
+
+        list.innerHTML=
+            historyHTML(
+                filtered
+            );
+
+    }
+
+}
+
+/* =========================================================
+   DELETE HISTORY ITEM
+   ========================================================= */
+
+function deleteHistoryItem(id){
+
+    state.history=
+        state.history.filter(
+            item=>item.id!==id
+        );
+
+    saveState();
+
+    updateCounters();
+
+    renderHistory();
+
+    notify(
+        "История",
+        "Запись удалена.",
+        "🗑️"
+    );
+
+}
+
+/* =========================================================
+   CLEAR HISTORY
+   ========================================================= */
+
+function clearHistory(){
+
+    if(!state.history.length){
+
+        notify(
+            "История",
+            "История уже пуста.",
+            "🕘"
+        );
+
+        return;
+
+    }
+
+    state.history=[];
+
+    saveState();
+
+    updateCounters();
+
+    if(
+        getActiveTab()?.type==="history"
+    ){
+
+        renderHistory();
+
+    }
+
+    notify(
+        "История очищена",
+        "Все записи истории удалены.",
+        "🗑️"
+    );
+
+}
+
+/* =========================================================
+   BOOKMARKS
+   ========================================================= */
+
+function isBookmarked(url){
+
+    return state.bookmarks.some(
+        item=>item.url===url
+    );
+
+}
+
+function toggleCurrentBookmark(){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    const url=
+        tab.url;
+
+    if(
+        !url ||
+        url==="nexa://home"
+    ){
+
+        notify(
+            "Закладки",
+            "Главную страницу нельзя добавить в закладки.",
+            "⭐"
+        );
+
+        return;
+
+    }
+
+    const existing=
+        state.bookmarks.find(
+            item=>item.url===url
+        );
+
+    if(existing){
+
+        state.bookmarks=
+            state.bookmarks.filter(
+                item=>item.id!==existing.id
+            );
+
+        notify(
+            "Закладка удалена",
+            existing.title,
+            "☆"
+        );
+
+    }else{
+
+        state.bookmarks.unshift({
+
+            id:uid("bookmark"),
+
+            title:
+                tab.title ||
+                getDomainName(url),
+
+            url,
+
+            createdAt:Date.now()
+
+        });
+
+        notify(
+            "Добавлено в закладки",
+            tab.title ||
+                getDomainName(url),
+            "⭐"
+        );
+
+    }
+
+    saveState();
+
+    updateCounters();
+
+    updateBookmarkButton();
+
+    if(
+        getActiveTab()?.type==="bookmarks"
+    ){
+
+        renderBookmarks();
+
+    }
+
+}
+
+/* =========================================================
+   BOOKMARK BUTTON
+   ========================================================= */
+
+function updateBookmarkButton(){
+
+    const button=
+        document.getElementById(
+            "bookmarkButton"
+        );
+
+    const tab=
+        getActiveTab();
+
+    if(!button || !tab){
+
+        return;
+
+    }
+
+    const active=
+        isBookmarked(
+            tab.url
+        );
+
+    button.textContent=
+        active
+            ?"★"
+            :"☆";
+
+    button.classList.toggle(
+        "active",
+        active
+    );
+
+}
+
+/* =========================================================
+   BOOKMARK PAGE
+   ========================================================= */
+
+function renderBookmarks(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        ⭐ Закладки
+                    </h1>
+
+                    <p>
+                        Твои сохранённые сайты.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    ${
+                        state.bookmarks.length
+                            ?`
+                                <div class="bookmark-grid">
+
+                                    ${state.bookmarks
+                                        .map(
+                                            bookmarkHTML
+                                        )
+                                        .join("")
+                                    }
+
+                                </div>
+                            `
+                            :`
+                                <div class="empty">
+
+                                    <div class="empty-icon">
+                                        ⭐
+                                    </div>
+
+                                    <div class="empty-title">
+                                        Закладок пока нет
+                                    </div>
+
+                                    <div class="empty-text">
+                                        Нажми ☆ возле адресной строки,
+                                        чтобы сохранить страницу.
+                                    </div>
+
+                                </div>
+                            `
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function bookmarkHTML(item){
+
+    return `
+
+        <div class="bookmark-card">
+
+            <div class="bookmark-icon">
+                🌐
+            </div>
+
+            <div
+                class="bookmark-main"
+                onclick="navigate('${escapeAttribute(item.url)}')"
+                style="cursor:pointer"
+            >
+
+                <div class="bookmark-title">
+                    ${escapeHTML(item.title)}
+                </div>
+
+                <div class="bookmark-url">
+                    ${escapeHTML(item.url)}
+                </div>
+
+            </div>
+
+            <button
+                class="icon-button"
+                title="Удалить"
+                onclick="deleteBookmark('${item.id}')"
+            >
+                ×
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+/* =========================================================
+   DELETE BOOKMARK
+   ========================================================= */
+
+function deleteBookmark(id){
+
+    state.bookmarks=
+        state.bookmarks.filter(
+            item=>item.id!==id
+        );
+
+    saveState();
+
+    updateCounters();
+
+    updateBookmarkButton();
+
+    renderBookmarks();
+
+    notify(
+        "Закладки",
+        "Закладка удалена.",
+        "🗑️"
+    );
+
+}
+
+/* =========================================================
+   COUNTERS
+   ========================================================= */
+
+function updateCounters(){
+
+    const historyCount=
+        document.getElementById(
+            "historyCount"
+        );
+
+    const bookmarkCount=
+        document.getElementById(
+            "bookmarkCount"
+        );
+
+    if(historyCount){
+
+        historyCount.textContent=
+            Math.min(
+                state.history.length,
+                999
+            );
+
+    }
+
+    if(bookmarkCount){
+
+        bookmarkCount.textContent=
+            Math.min(
+                state.bookmarks.length,
+                999
+            );
+
+    }
+
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+function updateSidebar(){
+
+    const tab=
+        getActiveTab();
+
+    if(!tab){
+
+        return;
+
+    }
+
+    document
+        .querySelectorAll(
+            ".sidebar-item"
+        )
+        .forEach(item=>{
+
+            item.classList.toggle(
+                "active",
+                item.dataset.page===tab.type
+            );
+
+        });
+
+}
+
+/* =========================================================
+   SETTINGS PAGE
+   ========================================================= */
+
+function renderSettings(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        ⚙️ Настройки
+                    </h1>
+
+                    <p>
+                        Персонализируй NexaBrowser.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <h2>
+                        Интерфейс
+                    </h2>
+
+                    ${settingSwitch(
+                        "animations",
+                        "Анимации",
+                        "Плавные переходы интерфейса."
+                    )}
+
+                    <div class="setting-row">
+
+                        <div>
+
+                            <div class="setting-name">
+                                Тема
+                            </div>
+
+                            <div class="setting-description">
+                                Выбери оформление браузера.
+                            </div>
+
+                        </div>
+
+                        <select
+                            class="select"
+                            onchange="changeTheme(this.value)"
+                        >
+
+                            <option
+                                value="dark"
+                                ${state.settings.theme==="dark"?"selected":""}
+                            >
+                                Тёмная
+                            </option>
+
+                            <option
+                                value="midnight"
+                                ${state.settings.theme==="midnight"?"selected":""}
+                            >
+                                Midnight
+                            </option>
+
+                            <option
+                                value="purple"
+                                ${state.settings.theme==="purple"?"selected":""}
+                            >
+                                Purple
+                            </option>
+
+                            <option
+                                value="ocean"
+                                ${state.settings.theme==="ocean"?"selected":""}
+                            >
+                                Ocean
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <h2>
+                        Конфиденциальность
+                    </h2>
+
+                    ${settingSwitch(
+                        "saveHistory",
+                        "Сохранять историю",
+                        "Сохранять посещённые страницы локально."
+                    )}
+
+                    ${settingSwitch(
+                        "suggestions",
+                        "Поисковые подсказки",
+                        "Использовать локальные подсказки NexaSearch."
+                    )}
+
+                    ${settingSwitch(
+                        "privateMode",
+                        "Приватный режим",
+                        "Не сохранять новую историю браузера."
+                    )}
+
+                </div>
+
+                <div class="card">
+
+                    <h2>
+                        Данные
+                    </h2>
+
+                    <p>
+                        Данные NexaBrowser хранятся
+                        в localStorage этого браузера.
+                    </p>
+
+                    <button
+                        class="secondary"
+                        onclick="exportBrowserData()"
+                    >
+                        📤 Экспортировать данные
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="importBrowserData()"
+                        style="margin-left:6px"
+                    >
+                        📥 Импортировать
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="resetBrowser()"
+                        style="
+                            margin-left:6px;
+                            color:var(--red);
+                        "
+                    >
+                        🗑 Сбросить
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function settingSwitch(
+    key,
+    title,
+    description
+){
+
+    const checked=
+        state.settings[key]
+            ?"checked"
+            :"";
+
+    return `
+
+        <div class="setting-row">
+
+            <div>
+
+                <div class="setting-name">
+                    ${escapeHTML(title)}
+                </div>
+
+                <div class="setting-description">
+                    ${escapeHTML(description)}
+                </div>
+
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    ${checked}
+                    onchange="changeSetting('${key}',this.checked)"
+                >
+
+                <span class="switch-track"></span>
+
+            </label>
+
+        </div>
+
+    `;
+
+}
+
+/* =========================================================
+   SETTINGS CHANGE
+   ========================================================= */
+
+function changeSetting(
+    key,
+    value
+){
+
+    if(
+        !Object.prototype.hasOwnProperty.call(
+            state.settings,
+            key
+        )
+    ){
+
+        return;
+
+    }
+
+    state.settings[key]=value;
+
+    saveState();
+
+    notify(
+        "Настройки",
+        "Изменения сохранены.",
+        "⚙️"
+    );
+
+}
+
+/* =========================================================
+   THEME
+   ========================================================= */
+
+function changeTheme(theme){
+
+    const themes={
+        dark:{
+            primary:"#667cff",
+            primary2:"#8b65ff",
+            cyan:"#20d9ff"
+        },
+
+        midnight:{
+            primary:"#4f7cff",
+            primary2:"#5865f2",
+            cyan:"#42b8ff"
+        },
+
+        purple:{
+            primary:"#9b5cff",
+            primary2:"#d15cff",
+            cyan:"#ff5cd8"
+        },
+
+        ocean:{
+            primary:"#00a8ff",
+            primary2:"#0077ff",
+            cyan:"#00e5c7"
+        }
+
+    };
+
+    const selected=
+        themes[theme] ||
+        themes.dark;
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--primary",
+            selected.primary
+        );
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--primary2",
+            selected.primary2
+        );
+
+    document.documentElement
+        .style
+        .setProperty(
+            "--cyan",
+            selected.cyan
+        );
+
+    state.settings.theme=
+        theme;
+
+    saveState();
+
+    notify(
+        "Тема изменена",
+        theme,
+        "🎨"
+    );
+
+}
+
+/* =========================================================
+   NOTES PAGE
+   ========================================================= */
+
+function renderNotes(){
+
+    ensureNotes();
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    if(
+        !selectedNoteId &&
+        state.notes.length
+    ){
+
+        selectedNoteId=
+            state.notes[0].id;
+
+    }
+
+    const selected=
+        state.notes.find(
+            note=>note.id===selectedNoteId
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        📝 Заметки
+                    </h1>
+
+                    <p>
+                        Личный блокнот NexaBrowser.
+                    </p>
+
+                </div>
+
+                <div class="notes-layout">
+
+                    <div class="notes-list">
+
+                        <div class="notes-list-head">
+
+                            <span class="notes-list-title">
+                                Мои заметки
+                            </span>
+
+                            <button
+                                class="notes-new"
+                                onclick="createNote()"
+                            >
+                                +
+                            </button>
+
+                        </div>
+
+                        <div id="notesList">
+
+                            ${notesListHTML()}
+
+                        </div>
+
+                    </div>
+
+                    <div class="note-editor">
+
+                        ${
+                            selected
+                                ?`
+
+                                    <input
+                                        class="note-title-input"
+                                        value="${escapeAttribute(selected.title)}"
+                                        oninput="updateNoteTitle(this.value)"
+                                    >
+
+                                    <textarea
+                                        class="note-body"
+                                        placeholder="Начни писать..."
+                                        oninput="updateNoteBody(this.value)"
+                                    >${escapeHTML(selected.body)}</textarea>
+
+                                `
+                                :`
+
+                                    <div class="empty">
+
+                                        <div class="empty-icon">
+                                            📝
+                                        </div>
+
+                                        <div class="empty-title">
+                                            Нет выбранной заметки
+                                        </div>
+
+                                        <div class="empty-text">
+                                            Создай новую заметку.
+                                        </div>
+
+                                    </div>
+
+                                `
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function ensureNotes(){
+
+    if(!state.notes.length){
+
+        const note={
+            id:uid("note"),
+            title:"Добро пожаловать",
+            body:
+                "Это твоя первая заметка в NexaBrowser.",
+            createdAt:Date.now(),
+            updatedAt:Date.now()
+        };
+
+        state.notes.push(note);
+
+        selectedNoteId=
+            note.id;
+
+        saveState();
+
+    }
+
+}
+
+function notesListHTML(){
+
+    return state.notes
+        .map(note=>`
+
+            <div
+                class="
+                    note-item
+                    ${
+                        note.id===selectedNoteId
+                            ?"active"
+                            :""
+                    }
+                "
+                onclick="selectNote('${note.id}')"
+            >
+
+                <div class="note-item-title">
+                    ${escapeHTML(note.title)}
+                </div>
+
+                <div class="note-item-preview">
+                    ${escapeHTML(
+                        note.body
+                            .replace(/\s+/g," ")
+                            .slice(0,70)
+                    )}
+                </div>
+
+            </div>
+
+        `)
+        .join("");
+
+}
+
+function selectNote(id){
+
+    selectedNoteId=id;
+
+    renderNotes();
+
+}
+
+function createNote(){
+
+    const note={
+        id:uid("note"),
+        title:"Новая заметка",
+        body:"",
+        createdAt:Date.now(),
+        updatedAt:Date.now()
+    };
+
+    state.notes.unshift(note);
+
+    selectedNoteId=
+        note.id;
+
+    saveState();
+
+    renderNotes();
+
+    notify(
+        "Заметки",
+        "Новая заметка создана.",
+        "📝"
+    );
+
+}
+
+function updateNoteTitle(value){
+
+    const note=
+        state.notes.find(
+            item=>item.id===selectedNoteId
+        );
+
+    if(!note){
+
+        return;
+
+    }
+
+    note.title=
+        value ||
+        "Без названия";
+
+    note.updatedAt=
+        Date.now();
+
+    saveState();
+
+}
+
+function updateNoteBody(value){
+
+    const note=
+        state.notes.find(
+            item=>item.id===selectedNoteId
+        );
+
+    if(!note){
+
+        return;
+
+    }
+
+    note.body=value;
+
+    note.updatedAt=
+        Date.now();
+
+    saveState();
+
+}
+
+/* =========================================================
+   CALCULATOR
+   ========================================================= */
+
+function renderCalculator(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        🧮 Калькулятор
+                    </h1>
+
+                    <p>
+                        Быстрые вычисления прямо в NexaBrowser.
+                    </p>
+
+                </div>
+
+                <div class="calculator">
+
+                    <div
+                        class="calc-display"
+                        id="calcDisplay"
+                    >
+                        ${escapeHTML(
+                            calculatorValue
+                        )}
+                    </div>
+
+                    <div class="calc-grid">
+
+                        ${calcButton(
+                            "AC",
+                            "clear",
+                            "calculatorClear()"
+                        )}
+
+                        ${calcButton(
+                            "±",
+                            "",
+                            "calculatorSign()"
+                        )}
+
+                        ${calcButton(
+                            "%",
+                            "",
+                            "calculatorPercent()"
+                        )}
+
+                        ${calcButton(
+                            "÷",
+                            "operator",
+                            "calculatorOperator('/')"
+                        )}
+
+                        ${calcButton(
+                            "7",
+                            "",
+                            "calculatorDigit('7')"
+                        )}
+
+                        ${calcButton(
+                            "8",
+                            "",
+                            "calculatorDigit('8')"
+                        )}
+
+                        ${calcButton(
+                            "9",
+                            "",
+                            "calculatorDigit('9')"
+                        )}
+
+                        ${calcButton(
+                            "×",
+                            "operator",
+                            "calculatorOperator('*')"
+                        )}
+
+                        ${calcButton(
+                            "4",
+                            "",
+                            "calculatorDigit('4')"
+                        )}
+
+                        ${calcButton(
+                            "5",
+                            "",
+                            "calculatorDigit('5')"
+                        )}
+
+                        ${calcButton(
+                            "6",
+                            "",
+                            "calculatorDigit('6')"
+                        )}
+
+                        ${calcButton(
+                            "−",
+                            "operator",
+                            "calculatorOperator('-')"
+                        )}
+
+                        ${calcButton(
+                            "1",
+                            "",
+                            "calculatorDigit('1')"
+                        )}
+
+                        ${calcButton(
+                            "2",
+                            "",
+                            "calculatorDigit('2')"
+                        )}
+
+                        ${calcButton(
+                            "3",
+                            "",
+                            "calculatorDigit('3')"
+                        )}
+
+                        ${calcButton(
+                            "+",
+                            "operator",
+                            "calculatorOperator('+')"
+                        )}
+
+                        ${calcButton(
+                            "0",
+                            "",
+                            "calculatorDigit('0')"
+                        )}
+
+                        ${calcButton(
+                            ".",
+                            "",
+                            "calculatorDecimal()"
+                        )}
+
+                        ${calcButton(
+                            "⌫",
+                            "",
+                            "calculatorBackspace()"
+                        )}
+
+                        ${calcButton(
+                            "=",
+                            "equals",
+                            "calculatorEquals()"
+                        )}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function calcButton(
+    label,
+    className,
+    action
+){
+
+    return `
+
+        <button
+            class="
+                calc-button
+                ${className}
+            "
+            onclick="${action}"
+        >
+            ${label}
+        </button>
+
+    `;
+
+}
+
+function updateCalculatorDisplay(){
+
+    const display=
+        document.getElementById(
+            "calcDisplay"
+        );
+
+    if(display){
+
+        display.textContent=
+            calculatorValue;
+
+    }
+
+}
+
+function calculatorDigit(digit){
+
+    if(calculatorWaiting){
+
+        calculatorValue=
+            digit;
+
+        calculatorWaiting=false;
+
+    }else if(
+        calculatorValue==="0"
+    ){
+
+        calculatorValue=
+            digit;
+
+    }else{
+
+        calculatorValue+=
+            digit;
+
+    }
+
+    updateCalculatorDisplay();
+
+}
+
+function calculatorDecimal(){
+
+    if(calculatorWaiting){
+
+        calculatorValue="0.";
+        calculatorWaiting=false;
+
+    }else if(
+        !calculatorValue.includes(".")
+    ){
+
+        calculatorValue+=".";
+
+    }
+
+    updateCalculatorDisplay();
+
+}
+
+function calculatorClear(){
+
+    calculatorValue="0";
+
+    calculatorOperator=null;
+
+    calculatorPrevious=null;
+
+    calculatorWaiting=false;
+
+    updateCalculatorDisplay();
+
+}
+
+function calculatorSign(){
+
+    if(
+        calculatorValue!=="0"
+    ){
+
+        calculatorValue=
+            calculatorValue.startsWith("-")
+                ?calculatorValue.slice(1)
+                :"-"+calculatorValue;
+
+    }
+
+    updateCalculatorDisplay();
+
+}
+
+function calculatorPercent(){
+
+    const value=
+        parseFloat(
+            calculatorValue
+        );
+
+    if(
+        Number.isFinite(value)
+    ){
+
+        calculatorValue=
+            String(value/100);
+
+    }
+
+    updateCalculatorDisplay();
+
+}
+
+function calculatorOperator(operator){
+
+    const input=
+        parseFloat(
+            calculatorValue
+        );
+
+    if(
+        !Number.isFinite(input)
+    ){
+
+        return;
+
+    }
+
+    if(
+        calculatorOperator &&
+        calculatorWaiting
+    ){
+
+        calculatorOperator=
+            operator;
+
+        return;
+
+    }
+
+    if(
+        calculatorPrevious!==null &&
+        calculatorOperator
+    ){
+
+        const result=
+            calculate(
+                calculatorPrevious,
+                input,
+                calculatorOperator
+            );
+
+        calculatorValue=
+            formatNumber(result);
+
+        calculatorPrevious=
+            result;
+
+    }else{
+
+        calculatorPrevious=
+            input;
+
+    }
+
+    calculatorOperator=
+        operator;
+
+    calculatorWaiting=true;
+
+    updateCalculatorDisplay();
+
+}
+
+function calculatorEquals(){
+
+    if(
+        calculatorOperator===null ||
+        calculatorPrevious===null
+    ){
+
+        return;
+
+    }
+
+    const input=
+        parseFloat(
+            calculatorValue
+        );
+
+    const result=
+        calculate(
+            calculatorPrevious,
+            input,
+            calculatorOperator
+        );
+
+    calculatorValue=
+        formatNumber(result);
+
+    calculatorPrevious=null;
+
+    calculatorOperator=null;
+
+    calculatorWaiting=true;
+
+    updateCalculatorDisplay();
+
+}
+
+function calculate(
+    first,
+    second,
+    operator
+){
+
+    switch(operator){
+
+        case "+":
+
+            return first+second;
+
+        case "-":
+
+            return first-second;
+
+        case "*":
+
+            return first*second;
+
+        case "/":
+
+            return second===0
+                ?NaN
+                :first/second;
+
+        default:
+
+            return second;
+
+    }
+
+}
+
+function formatNumber(value){
+
+    if(!Number.isFinite(value)){
+
+        return "Ошибка";
+
+    }
+
+    return String(
+        Number(
+            value.toPrecision(12)
+        )
+    );
+
+}
+
+function calculatorBackspace(){
+
+    if(
+        calculatorValue==="Ошибка"
+    ){
+
+        calculatorClear();
+
+        return;
+
+    }
+
+    calculatorValue=
+        calculatorValue.length>1
+            ?calculatorValue.slice(0,-1)
+            :"0";
+
+    updateCalculatorDisplay();
+
+}
+
+/* =========================================================
+   CONVERTER
+   ========================================================= */
+
+function renderConverter(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        📐 Конвертер
+                    </h1>
+
+                    <p>
+                        Быстрые преобразования единиц.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <div
+                        style="
+                            display:grid;
+                            grid-template-columns:
+                                repeat(3,1fr);
+                            gap:10px;
+                            margin-bottom:15px;
+                        "
+                    >
+
+                        <button
+                            class="secondary"
+                            onclick="setConverterCategory('length')"
+                        >
+                            📏 Длина
+                        </button>
+
+                        <button
+                            class="secondary"
+                            onclick="setConverterCategory('weight')"
+                        >
+                            ⚖️ Вес
+                        </button>
+
+                        <button
+                            class="secondary"
+                            onclick="setConverterCategory('temperature')"
+                        >
+                            🌡️ Температура
+                        </button>
+
+                    </div>
+
+                    <div
+                        id="converterContent"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+    renderConverterContent();
+
+}
+
+function setConverterCategory(
+    category
+){
+
+    currentConverterCategory=
+        category;
+
+    renderConverterContent();
+
+}
+
+function renderConverterContent(){
+
+    const container=
+        document.getElementById(
+            "converterContent"
+        );
+
+    if(!container){
+
+        return;
+
+    }
+
+    const configs={
+        length:{
+            units:[
+                ["m","Метры"],
+                ["km","Километры"],
+                ["cm","Сантиметры"],
+                ["mm","Миллиметры"],
+                ["mi","Мили"],
+                ["ft","Футы"]
+            ]
+        },
+
+        weight:{
+            units:[
+                ["kg","Килограммы"],
+                ["g","Граммы"],
+                ["mg","Миллиграммы"],
+                ["lb","Фунты"],
+                ["oz","Унции"]
+            ]
+        },
+
+        temperature:{
+            units:[
+                ["c","Цельсий"],
+                ["f","Фаренгейт"],
+                ["k","Кельвин"]
+            ]
+        }
+
+    };
+
+    const config=
+        configs[
+            currentConverterCategory
+        ];
+
+    container.innerHTML=`
+
+        <div
+            style="
+                display:grid;
+                grid-template-columns:
+                    1fr 1fr;
+                gap:10px;
+            "
+        >
+
+            <div>
+
+                <label
+                    style="
+                        display:block;
+                        margin-bottom:6px;
+                        color:var(--muted);
+                        font-size:9px;
+                    "
+                >
+                    Значение
+                </label>
+
+                <input
+                    id="converterInput"
+                    type="number"
+                    value="1"
+                    class="history-search"
+                    oninput="convertUnits()"
+                >
+
+            </div>
+
+            <div>
+
+                <label
+                    style="
+                        display:block;
+                        margin-bottom:6px;
+                        color:var(--muted);
+                        font-size:9px;
+                    "
+                >
+                    Результат
+                </label>
+
+                <input
+                    id="converterOutput"
+                    class="history-search"
+                    readonly
+                >
+
+            </div>
+
+            <div>
+
+                <select
+                    id="converterFrom"
+                    class="select"
+                    style="width:100%"
+                    onchange="convertUnits()"
+                >
+
+                    ${config.units
+                        .map(
+                            unit=>
+                                `<option value="${unit[0]}">
+                                    ${unit[1]}
+                                </option>`
+                        )
+                        .join("")
+                    }
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <select
+                    id="converterTo"
+                    class="select"
+                    style="width:100%"
+                    onchange="convertUnits()"
+                >
+
+                    ${config.units
+                        .map(
+                            unit=>
+                                `<option value="${unit[0]}">
+                                    ${unit[1]}
+                                </option>`
+                        )
+                        .join("")
+                    }
+
+                </select>
+
+            </div>
+
+        </div>
+
+    `;
+
+    const to=
+        document.getElementById(
+            "converterTo"
+        );
+
+    if(config.units.length>1){
+
+        to.selectedIndex=1;
+
+    }
+
+    convertUnits();
+
+}
+
+function convertUnits(){
+
+    const input=
+        parseFloat(
+            document.getElementById(
+                "converterInput"
+            )?.value
+        );
+
+    const from=
+        document.getElementById(
+            "converterFrom"
+        )?.value;
+
+    const to=
+        document.getElementById(
+            "converterTo"
+        )?.value;
+
+    const output=
+        document.getElementById(
+            "converterOutput"
+        );
+
+    if(
+        !output ||
+        !Number.isFinite(input)
+    ){
+
+        return;
+
+    }
+
+    let result;
+
+    if(
+        currentConverterCategory==="temperature"
+    ){
+
+        result=
+            convertTemperature(
+                input,
+                from,
+                to
+            );
+
+    }else{
+
+        result=
+            convertLinear(
+                input,
+                from,
+                to,
+                currentConverterCategory
+            );
+
+    }
+
+    output.value=
+        formatNumber(result);
+
+}
+
+function convertTemperature(
+    value,
+    from,
+    to
+){
+
+    let celsius;
+
+    if(from==="c"){
+
+        celsius=value;
+
+    }else if(from==="f"){
+
+        celsius=
+            (value-32)*5/9;
+
+    }else if(from==="k"){
+
+        celsius=
+            value-273.15;
+
+    }else{
+
+        celsius=value;
+
+    }
+
+    if(to==="c"){
+
+        return celsius;
+
+    }
+
+    if(to==="f"){
+
+        return celsius*9/5+32;
+
+    }
+
+    if(to==="k"){
+
+        return celsius+273.15;
+
+    }
+
+    return celsius;
+
+}
+
+function convertLinear(
+    value,
+    from,
+    to,
+    category
+){
+
+    const maps={
+
+        length:{
+            m:1,
+            km:1000,
+            cm:.01,
+            mm:.001,
+            mi:1609.344,
+            ft:.3048
+        },
+
+        weight:{
+            kg:1,
+            g:.001,
+            mg:.000001,
+            lb:.45359237,
+            oz:.028349523125
+        }
+
+    };
+
+    const map=
+        maps[category];
+
+    if(
+        !map ||
+        map[from]===undefined ||
+        map[to]===undefined
+    ){
+
+        return NaN;
+
+    }
+
+    return value*map[from]/map[to];
+
+}
+
+/* =========================================================
+   DOWNLOADS
+   ========================================================= */
+
+function renderDownloads(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        📥 Загрузки
+                    </h1>
+
+                    <p>
+                        Локальный список загрузок NexaBrowser.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    ${
+                        state.downloads.length
+                            ?state.downloads
+                                .map(
+                                    downloadHTML
+                                )
+                                .join("")
+                            :`
+                                <div class="empty">
+
+                                    <div class="empty-icon">
+                                        📥
+                                    </div>
+
+                                    <div class="empty-title">
+                                        Загрузок нет
+                                    </div>
+
+                                    <div class="empty-text">
+                                        Здесь будут отображаться
+                                        сохранённые файлы.
+                                    </div>
+
+                                </div>
+                            `
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function downloadHTML(item){
+
+    return `
+
+        <div
+            class="history-row"
+        >
+
+            <div class="history-icon">
+                📄
+            </div>
+
+            <div class="history-main">
+
+                <div class="history-title">
+                    ${escapeHTML(item.name)}
+                </div>
+
+                <div class="history-url">
+                    ${escapeHTML(item.url)}
+                </div>
+
+            </div>
+
+            <div class="history-time">
+                ${formatTime(item.timestamp)}
+            </div>
+
+            <button
+                class="icon-button"
+                onclick="deleteDownload('${item.id}')"
+            >
+                ×
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+function deleteDownload(id){
+
+    state.downloads=
+        state.downloads.filter(
+            item=>item.id!==id
+        );
+
+    saveState();
+
+    renderDownloads();
+
+    notify(
+        "Загрузки",
+        "Запись удалена.",
+        "🗑️"
+    );
+
+}
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+function renderProfile(){
+
+    const page=
+        document.getElementById(
+            "page"
+        );
+
+    page.innerHTML=`
+
+        <div class="internal">
+
+            <div class="internal-inner">
+
+                <div class="heading">
+
+                    <h1>
+                        👤 Профиль
+                    </h1>
+
+                    <p>
+                        Твой локальный профиль NexaBrowser.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <div
+                        style="
+                            display:flex;
+                            align-items:center;
+                            gap:18px;
+                        "
+                    >
+
+                        <div
+                            style="
+                                width:76px;
+                                height:76px;
+                                display:grid;
+                                place-items:center;
+                                border-radius:23px;
+                                color:white;
+                                background:${escapeAttribute(state.profile.color)};
+                                font-size:30px;
+                                font-weight:900;
+                            "
+                        >
+                            ${escapeHTML(
+                                state.profile.avatar
+                            )}
+                        </div>
+
+                        <div>
+
+                            <div
+                                style="
+                                    font-size:20px;
+                                    font-weight:800;
+                                "
+                            >
+                                ${escapeHTML(
+                                    state.profile.name
+                                )}
+                            </div>
+
+                            <div
+                                style="
+                                    margin-top:5px;
+                                    color:var(--muted);
+                                    font-size:10px;
+                                "
+                            >
+                                Личный профиль NexaBrowser
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <h2>
+                        Изменить профиль
+                    </h2>
+
+                    <div
+                        style="
+                            display:grid;
+                            gap:10px;
+                            max-width:500px;
+                        "
+                    >
+
+                        <input
+                            id="profileName"
+                            class="history-search"
+                            value="${escapeAttribute(state.profile.name)}"
+                            placeholder="Имя"
+                        >
+
+                        <input
+                            id="profileAvatar"
+                            class="history-search"
+                            value="${escapeAttribute(state.profile.avatar)}"
+                            placeholder="Буква или emoji"
+                            maxlength="2"
+                        >
+
+                        <input
+                            id="profileColor"
+                            type="color"
+                            value="${escapeAttribute(state.profile.color)}"
+                            style="
+                                width:100%;
+                                height:40px;
+                                padding:3px;
+                                background:var(--surface2);
+                                border:1px solid var(--border);
+                                border-radius:8px;
+                            "
+                        >
+
+                        <button
+                            class="primary"
+                            onclick="saveProfile()"
+                        >
+                            Сохранить профиль
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function saveProfile(){
+
+    const name=
+        document.getElementById(
+            "profileName"
+        ).value.trim();
+
+    const avatar=
+        document.getElementById(
+            "profileAvatar"
+        ).value.trim();
+
+    const color=
+        document.getElementById(
+            "profileColor"
+        ).value;
+
+    state.profile.name=
+        name ||
+        "Nexa User";
+
+    state.profile.avatar=
+        avatar ||
+        "N";
+
+    state.profile.color=
+        color ||
+        "#667cff";
+
+    saveState();
+
+    renderProfile();
+
+    notify(
+        "Профиль",
+        "Профиль обновлён.",
+        "👤"
+    );
+
+}
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+function toggleMenu(){
+
+    const menu=
+        document.getElementById(
+            "mainMenu"
+        );
+
+    const context=
+        document.getElementById(
+            "contextMenu"
+        );
+
+    context.classList.remove(
+        "open"
+    );
+
+    menu.classList.toggle(
+        "open"
+    );
+
+    const toolbar=
+        document.querySelector(
+            ".toolbar"
+        );
+
+    if(toolbar){
+
+        const rect=
+            toolbar.getBoundingClientRect();
+
+        menu.style.top=
+            (rect.bottom+5)+"px";
+
+        menu.style.right=
+            "12px";
+
+    }
+
+}
+
+function closeMenu(){
+
+    document
+        .getElementById(
+            "mainMenu"
+        )
+        ?.classList.remove(
+            "open"
+        );
+
+}
+
+function showContextMenu(
+    x,
+    y
+){
+
+    const menu=
+        document.getElementById(
+            "contextMenu"
+        );
+
+    menu.style.left=
+        x+"px";
+
+    menu.style.top=
+        y+"px";
+
+    menu.classList.add(
+        "open"
+    );
+
+    const rect=
+        menu.getBoundingClientRect();
+
+    if(rect.right>window.innerWidth){
+
+        menu.style.left=
+            Math.max(
+                5,
+                window.innerWidth-
+                rect.width-
+                5
+            )+"px";
+
+    }
+
+    if(rect.bottom>window.innerHeight){
+
+        menu.style.top=
+            Math.max(
+                5,
+                window.innerHeight-
+                rect.height-
+                5
+            )+"px";
+
+    }
+
+}
+
+function closeContextMenu(){
+
+    document
+        .getElementById(
+            "contextMenu"
+        )
+        ?.classList.remove(
+            "open"
+        );
+
+}
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+function openModal(
+    title,
+    content
+){
+
+    const layer=
+        document.getElementById(
+            "modalLayer"
+        );
+
+    const titleElement=
+        document.getElementById(
+            "modalTitle"
+        );
+
+    const contentElement=
+        document.getElementById(
+            "modalContent"
+        );
+
+    titleElement.textContent=
+        title;
+
+    contentElement.innerHTML=
+        content;
+
+    layer.classList.add(
+        "open"
+    );
+
+}
+
+function closeModal(){
+
+    document
+        .getElementById(
+            "modalLayer"
+        )
+        .classList.remove(
+            "open"
+        );
+
+}
+
+function modalBackgroundClick(
+    event
+){
+
+    if(
+        event.target.id===
+        "modalLayer"
+    ){
+
+        closeModal();
+
+    }
+
+}
+
+/* =========================================================
+   NOTIFICATIONS
+   ========================================================= */
+
+function notify(
+    title,
+    text,
+    icon="ℹ️"
+){
+
+    const container=
+        document.getElementById(
+            "notifications"
+        );
+
+    if(!container){
+
+        return;
+
+    }
+
+    const element=
+        document.createElement(
+            "div"
+        );
+
+    element.className=
+        "notification";
+
+    element.innerHTML=`
+
+        <div class="notification-icon">
+            ${icon}
+        </div>
+
+        <div class="notification-content">
+
+            <div class="notification-title">
+                ${escapeHTML(title)}
+            </div>
+
+            <div class="notification-text">
+                ${escapeHTML(text)}
+            </div>
+
+        </div>
+
+    `;
+
+    container.appendChild(
+        element
+    );
+
+    setTimeout(
+        ()=>{
+
+            element.style.opacity="0";
+
+            element.style.transform=
+                "translateY(8px)";
+
+            element.style.transition=
+                ".2s ease";
+
+            setTimeout(
+                ()=>{
+                    element.remove();
+                },
+                220
+            );
+
+        },
+        3200
+    );
+
+}
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+
+function updateClock(){
+
+    const now=
+        new Date();
+
+    const time=
+        now.toLocaleTimeString(
+            "ru-RU",
+            {
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit"
+            }
+        );
+
+    const date=
+        now.toLocaleDateString(
+            "ru-RU",
+            {
+                weekday:"long",
+                day:"numeric",
+                month:"long",
+                year:"numeric"
+            }
+        );
+
+    const clock=
+        document.getElementById(
+            "homeClock"
+        );
+
+    const dateElement=
+        document.getElementById(
+            "homeDate"
+        );
+
+    if(clock){
+
+        clock.textContent=
+            time;
+
+    }
+
+    if(dateElement){
+
+        dateElement.textContent=
+            date;
+            
+    }
+
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function setStatus(text){
+
+    const element=
+        document.getElementById(
+            "statusText"
+        );
+
+    if(element){
+
+        element.textContent=
+            text;
+
+    }
+
+}
+
+/* =========================================================
+   UTILITY
+   ========================================================= */
+
+function getDomainName(url){
+
+    try{
+
+        const parsed=
+            new URL(
+                url
+            );
+
+        return parsed.hostname;
+
+    }catch(error){
+
+        return url
+            .replace(
+                /^https?:\/\//i,
+                ""
+            )
+            .split("/")[0];
+
+    }
+
+}
+
+function formatTime(timestamp){
+
+    const date=
+        new Date(timestamp);
+
+    return date.toLocaleString(
+        "ru-RU",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+function escapeAttribute(value){
+
+    return escapeHTML(
+        value
+    )
+        .replace(
+            /`/g,
+            "&#096;"
+        );
+
+}
+
+/* =========================================================
+   EXPORT DATA
+   ========================================================= */
+
+function exportBrowserData(){
+
+    const data=
+        JSON.stringify(
+            state,
+            null,
+            2
+        );
+
+    const blob=
+        new Blob(
+            [data],
+            {
+                type:
+                    "application/json"
+            }
+        );
+
+    const url=
+        URL.createObjectURL(
+            blob
+        );
+
+    const link=
+        document.createElement(
+            "a"
+        );
+
+    link.href=url;
+
+    link.download=
+        "nexabrowser-backup.json";
+
+    document.body.appendChild(
+        link
+    );
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(
+        url
+    );
+
+    notify(
+        "Экспорт",
+        "Резервная копия создана.",
+        "📤"
+    );
+
+}
+
+/* =========================================================
+   IMPORT DATA
+   ========================================================= */
+
+function importBrowserData(){
+
+    const input=
+        document.createElement(
+            "input"
+        );
+
+    input.type="file";
+
+    input.accept=
+        "application/json,.json";
+
+    input.addEventListener(
+        "change",
+        ()=>{
+            const file=
+                input.files?.[0];
+
+            if(!file){
+
+                return;
+
+            }
+
+            const reader=
+                new FileReader();
+
+            reader.onload=()=>{
+
+                try{
+
+                    const imported=
+                        JSON.parse(
+                            reader.result
+                        );
+
+                    state=
+                        mergeState(
+                            createDefaultState(),
+                            imported
+                        );
+
+                    normalizeState();
+
+                    renderTabs();
+
+                    renderCurrentPage();
+
+                    updateCounters();
+
+                    notify(
+                        "Импорт завершён",
+                        "Данные NexaBrowser восстановлены.",
+                        "📥"
+                    );
+
+                }catch(error){
+
+                    notify(
+                        "Ошибка импорта",
+                        "Файл имеет неправильный формат.",
+                        "⚠️"
+                    );
+
+                }
+
+            };
+
+            reader.readAsText(
+                file
+            );
+
+        }
+    );
+
+    input.click();
+
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+function resetBrowser(){
+
+    const confirmed=
+        confirm(
+            "Сбросить все данные NexaBrowser?\n\n" +
+            "Будут удалены история, закладки, заметки, " +
+            "профиль и настройки."
+        );
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+    localStorage.removeItem(
+        STORAGE_KEY
+    );
+
+    state=
+        createDefaultState();
+
+    selectedNoteId=null;
+
+    saveState();
+
+    renderTabs();
+
+    renderCurrentPage();
+
+    updateCounters();
+
+    updateNavigationButtons();
+
+    notify(
+        "NexaBrowser",
+        "Данные браузера сброшены.",
+        "🗑️"
+    );
+
+}
+
+/* =========================================================
+   START
+   ========================================================= */
+
+init();
+
+</script>
+
+</body>
+</html>
